@@ -7,7 +7,8 @@
     "module": "dist/index.mjs",
     "types": "dist/index.d.ts",
     "keywords": [
-        "Margonem"
+        "Margonem",
+        "świry margonemskie"
     ],
     "repository": {
         "type": "git",
