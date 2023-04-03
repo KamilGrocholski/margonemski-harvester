@@ -1,12 +1,21 @@
 {
     "name": "margonemski-scraper",
+    "description": "Można se pobrać rzeczy z tej strony -> https://www.margonem.pl",
     "license": "MIT",
     "version": "0.0.1",
     "main": "dist/index.js",
     "module": "dist/index.mjs",
     "types": "dist/index.d.ts",
+    "keywords": [
+        "Margonem",
+        "świry margonemskie"
+    ],
+    "repository": {
+        "type": "git",
+        "utl": "https://github.com/KamilGrocholski/margonemski-scraper/tree/main"
+    },
     "scripts": {
-        "build": "tsup index.ts --format cjs,esm --dts",
+        "build": "tsup src/index.ts --format cjs,esm --dts",
         "release": "pnpm run build && changeset publish",
         "lint": "tsc"
     },
