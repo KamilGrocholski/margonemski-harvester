@@ -9,9 +9,9 @@ export type ServersStatistics = z.output<typeof serversStatisticsSchema>
 export const serversStatisticsSchema = z.array(
     z.object({
         name: z.string().min(1),
-        maxOnline: z.number().positive().int(),
-        total: z.number().positive().int(),
-        online: z.number().positive().int(),
+        maxOnline: z.number().int().nonnegative(),
+        total: z.number().int().nonnegative(),
+        online: z.number().int().nonnegative(),
     })
 )
 
@@ -25,7 +25,9 @@ export function validateServersStatistics(
 }
 
 export async function getServersStatistics(
-    shouldValidate: boolean = true
+    options: {
+        shouldValidate: boolean
+    } = { shouldValidate: true }
 ): Promise<ServersStatistics> {
     const { data } = await axios.get(composeUrl('/stats'))
     const $ = load(data)
@@ -50,7 +52,7 @@ export async function getServersStatistics(
         })
     })
 
-    if (shouldValidate) {
+    if (options.shouldValidate) {
         serversStatisticsSchema.parse(serversStatistics)
     }
 
