@@ -1,32 +1,20 @@
 import { z } from 'zod'
 import { load } from 'cheerio'
 import axios from 'axios'
-import {
-    DEFAULT_REQUEST_DELAY_IN_MS,
-    PAGES,
-    PROFESSIONS,
-    Profession,
-} from '../constants'
-import { composeUrl, delay } from '../utils'
+import { DEFAULT_REQUEST_DELAY_IN_MS, PAGES, Profession } from '../constants'
+import { composeUrl, delay, schemes } from '../utils'
 
 export type CharacterRow = z.output<typeof characterRowSchema>
 export type CharactersLadder = z.output<typeof charactersLadderSchema>
 
 export const characterRowSchema = z.object({
-    rank: z.number().int().min(1),
-    name: z.string().min(1),
-    level: z.number().int().min(1),
-    profession: z.string().refine(
-        (value) => {
-            return PROFESSIONS.includes(value as Profession)
-        },
-        {
-            message:
-                'Profesja jest nie poprawna albo została dodana nowa do Margonem i nie jest ona uwzględniona w liście `PROFESSIONS`.',
-        }
-    ) as z.ZodType<Profession>,
-    ph: z.number().int().min(0),
-    lastOnline: z.string().min(1),
+    rank: schemes.rank,
+    name: schemes.name,
+    level: schemes.level,
+    profession: schemes.profession,
+    ph: schemes.ph,
+    lastOnline: schemes.lastOnline,
+    characterLink: schemes.characterLink,
 })
 
 export const charactersLadderSchema = z.array(characterRowSchema)
@@ -40,7 +28,7 @@ export function validateCharactersLadder(
     return parsedCharactersLadder
 }
 
-export async function getServerLadderPage(
+export async function getServerCharactersLadderPage(
     serverName: string,
     page: number,
     options: {
@@ -63,6 +51,7 @@ export async function getServerLadderPage(
 
         const rank = parseInt(rowData.eq(0).text(), 10)
         const name = rowData.eq(1).text().trim()
+        const characterLink = rowData.eq(1).attr('href') as string
         const level = parseInt(rowData.eq(2).text(), 10)
         const profession = rowData.eq(3).text().trim() as Profession
         const ph = parseInt(rowData.eq(4).text())
@@ -71,6 +60,7 @@ export async function getServerLadderPage(
         charactersLadder.push({
             rank,
             name,
+            characterLink,
             level,
             profession,
             ph,
@@ -85,13 +75,15 @@ export async function getServerLadderPage(
     return charactersLadder
 }
 
-export async function getServerLadder(
+export async function getServerCharactersLadder(
     serverName: string,
     onPageComplete: (
         pageData: CharactersLadder,
         currentPage: number
     ) => Promise<void> | void,
-    delayBetweenPagesInMs: number = DEFAULT_REQUEST_DELAY_IN_MS
+    options: { delayBetweenPagesInMs: number | undefined } = {
+        delayBetweenPagesInMs: DEFAULT_REQUEST_DELAY_IN_MS,
+    }
 ): Promise<void> {
     const { data } = await axios.get(
         composeUrl(`/ladder/players,${serverName}?page=1`)
@@ -129,6 +121,7 @@ export async function getServerLadder(
 
             const rank = parseInt(rowData.eq(0).text(), 10)
             const name = rowData.eq(1).text().trim()
+            const characterLink = rowData.eq(1).attr('href') as string
             const level = parseInt(rowData.eq(2).text(), 10)
             const profession = rowData.eq(3).text().trim() as Profession
             const ph = parseInt(rowData.eq(4).text())
@@ -137,6 +130,7 @@ export async function getServerLadder(
             charactersLadder.push({
                 rank,
                 name,
+                characterLink,
                 level,
                 profession,
                 ph,
@@ -148,6 +142,8 @@ export async function getServerLadder(
 
         currentPage++
 
-        await delay(delayBetweenPagesInMs)
+        if (options.delayBetweenPagesInMs !== undefined) {
+            await delay(options.delayBetweenPagesInMs)
+        }
     }
 }

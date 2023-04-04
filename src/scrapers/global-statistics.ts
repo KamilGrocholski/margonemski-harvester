@@ -24,7 +24,9 @@ export function validateGlobalStatistics(
 }
 
 export async function getGlobalStatistics(
-    shouldValidate: boolean = true
+    options: {
+        shouldValidate: boolean
+    } = { shouldValidate: true }
 ): Promise<GlobalStatistics> {
     const { data } = await axios.get(composeUrl('/art/world'))
     const $ = load(data)
@@ -49,7 +51,7 @@ export async function getGlobalStatistics(
         newAccounts: newAccountsElement.text(),
     }
 
-    if (shouldValidate) {
+    if (options.shouldValidate) {
         globalStatisticsSchema.parse(globalStatistics)
     }
 
