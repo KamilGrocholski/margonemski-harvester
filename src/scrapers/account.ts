@@ -126,7 +126,6 @@ export async function getAccountInfo(
 
         charactersList.each((_, element) => {
             const character = getCharacter(element)
-            console.log(character)
             characters.push(character)
         })
 
