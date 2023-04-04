@@ -16,8 +16,15 @@ export type Schemes = {
 }
 
 export const schemes = {
-    guildLink: z.string().startsWith('/guilds/view,').or(z.literal('')),
-    characterLink: z.string().startsWith('/profile/view,'),
+    guildLink: z
+        .string()
+        .regex(/^\/guilds\/view,(\w+),(\d+)$/, 'Niepoprawny link do klanu'),
+    characterLink: z
+        .string()
+        .regex(
+            /^\/profile\/view,(\d+)#char_(\d+),(\w+)$/,
+            'Niepoprawny link do postaci'
+        ),
     rank: z.number().int().min(1),
     level: z.number().int().nonnegative(),
     name: z.string().min(1),

@@ -15,9 +15,9 @@ export const profileCharacterSchema = z.object({
     serverName: z.string(),
     guildName: z.string(),
     guildId: z.number().int().nonnegative(),
-    guildLink: schemes.guildLink,
+    guildLink: schemes.guildLink.or(z.literal('')),
     gender: schemes.gender,
-    lastOnline: z.number().nonnegative(),
+    lastOnline: z.number().int().nonnegative(),
 })
 
 export const accountInfoSchema = z.object({
