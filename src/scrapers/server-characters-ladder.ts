@@ -81,7 +81,9 @@ export async function getServerCharactersLadder(
         pageData: CharactersLadder,
         currentPage: number
     ) => Promise<void> | void,
-    delayBetweenPagesInMs: number = DEFAULT_REQUEST_DELAY_IN_MS
+    options: { delayBetweenPagesInMs: number | undefined } = {
+        delayBetweenPagesInMs: DEFAULT_REQUEST_DELAY_IN_MS,
+    }
 ): Promise<void> {
     const { data } = await axios.get(
         composeUrl(`/ladder/players,${serverName}?page=1`)
@@ -140,6 +142,8 @@ export async function getServerCharactersLadder(
 
         currentPage++
 
-        await delay(delayBetweenPagesInMs)
+        if (options.delayBetweenPagesInMs !== undefined) {
+            await delay(options.delayBetweenPagesInMs)
+        }
     }
 }

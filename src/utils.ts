@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { type Page, BASE_URL, PROFESSIONS, Profession } from './constants'
+import { type Page, BASE_URL, PROFESSIONS, type Profession } from './constants'
 
 export function composeUrl(
     page: Page,
@@ -11,9 +11,13 @@ export function composeUrl(
 export const delay = (timeInMs: number) =>
     new Promise((res) => setTimeout(res, timeInMs))
 
+export type Schemes = {
+    [Key in keyof typeof schemes]: z.output<(typeof schemes)[Key]>
+}
+
 export const schemes = {
-    guildLink: z.string().min(1),
-    characterLink: z.string().min(1),
+    guildLink: z.string().startsWith('/guilds/view,').or(z.literal('')),
+    characterLink: z.string().startsWith('/profile/view,'),
     rank: z.number().int().min(1),
     level: z.number().int().nonnegative(),
     name: z.string().min(1),
@@ -28,4 +32,5 @@ export const schemes = {
         }
     ) as z.ZodType<Profession>,
     lastOnline: z.string().min(1),
+    gender: z.literal('Mężczyzna').or(z.literal('Kobieta')),
 }

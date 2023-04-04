@@ -28,17 +28,17 @@ export function validateGuildCharacters(
 
 export async function getGuildCharacters(
     serverName: string,
-    page: number,
+    guildId: number,
     options: {
         shouldValidate: boolean
     } = { shouldValidate: true }
 ): Promise<GuildCharacter[]> {
     const { data } = await axios.get(
-        composeUrl(`/ladder/players,${serverName}?page=${page}`)
+        composeUrl(`/guilds/view,${serverName},${guildId}`)
     )
     const $ = load(data)
 
-    const selectors = PAGES['/ladder/players'].selectors
+    const selectors = PAGES['/guilds/view'].selectors
 
     const tableRows = $(selectors.tableBody).find('tr')
 
@@ -49,7 +49,7 @@ export async function getGuildCharacters(
 
         const rank = parseInt(rowData.eq(0).text(), 10)
         const name = rowData.eq(1).text().trim()
-        const characterLink = rowData.eq(1).attr('href') as string
+        const characterLink = rowData.eq(1).find('a').attr('href') as string
         const level = parseInt(rowData.eq(2).text(), 10)
         const profession = rowData.eq(3).text().trim() as Profession
         const ph = parseInt(rowData.eq(4).text())

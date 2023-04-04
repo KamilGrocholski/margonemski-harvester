@@ -33,7 +33,7 @@ export async function getServerGuildsLadderPage(
     } = { shouldValidate: true }
 ): Promise<GuildsLadder> {
     const { data } = await axios.get(
-        composeUrl(`/guilds/view,${serverName},${page}`)
+        composeUrl(`/ladder/guilds,${serverName}?page=${page}`)
     )
     const $ = load(data)
 
@@ -78,9 +78,13 @@ export async function getServerGuildsLadder(
         pageData: GuildsLadder,
         currentPage: number
     ) => Promise<void> | void,
-    delayBetweenPagesInMs: number = DEFAULT_REQUEST_DELAY_IN_MS
+    options: { delayBetweenPagesInMs: number | undefined } = {
+        delayBetweenPagesInMs: DEFAULT_REQUEST_DELAY_IN_MS,
+    }
 ): Promise<void> {
-    const { data } = await axios.get(composeUrl(`/guilds/view,${serverName},1`))
+    const { data } = await axios.get(
+        composeUrl(`/ladder/guilds,${serverName}?page=1`)
+    )
     const $ = load(data)
 
     const selectors = PAGES['/ladder/guilds'].selectors
@@ -90,7 +94,7 @@ export async function getServerGuildsLadder(
 
     while (currentPage <= numberOfPages) {
         const { data } = await axios.get(
-            composeUrl(`/guilds/view,${serverName},${currentPage}`)
+            composeUrl(`/ladder/guilds,${serverName}?page=${currentPage}`)
         )
         const $ = load(data)
 
@@ -135,6 +139,8 @@ export async function getServerGuildsLadder(
 
         currentPage++
 
-        await delay(delayBetweenPagesInMs)
+        if (options.delayBetweenPagesInMs !== undefined) {
+            await delay(options.delayBetweenPagesInMs)
+        }
     }
 }

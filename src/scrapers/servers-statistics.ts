@@ -4,20 +4,20 @@ import axios from 'axios'
 import { PAGES } from '../constants'
 import { composeUrl } from '../utils'
 
-export type ServersStatistics = z.output<typeof serversStatisticsSchema>
+export type ServerStatistics = z.output<typeof serverStatisticsSchema>
 
-export const serversStatisticsSchema = z.array(
-    z.object({
-        name: z.string().min(1),
-        maxOnline: z.number().int().nonnegative(),
-        total: z.number().int().nonnegative(),
-        online: z.number().int().nonnegative(),
-    })
-)
+export const serverStatisticsSchema = z.object({
+    name: z.string().min(1),
+    maxOnline: z.number().int().nonnegative(),
+    total: z.number().int().nonnegative(),
+    online: z.number().int().nonnegative(),
+})
+
+export const serversStatisticsSchema = z.array(serverStatisticsSchema)
 
 export function validateServersStatistics(
     serversStatistics: unknown
-): ServersStatistics {
+): ServerStatistics[] {
     const parsedServerStatistics =
         serversStatisticsSchema.parse(serversStatistics)
 
@@ -28,7 +28,7 @@ export async function getServersStatistics(
     options: {
         shouldValidate: boolean
     } = { shouldValidate: true }
-): Promise<ServersStatistics> {
+): Promise<ServerStatistics[]> {
     const { data } = await axios.get(composeUrl('/stats'))
     const $ = load(data)
 
@@ -36,7 +36,7 @@ export async function getServersStatistics(
         PAGES['/stats'].selectors.serversStatistics.list
     )
 
-    const serversStatistics: ServersStatistics = []
+    const serversStatistics: ServerStatistics[] = []
 
     serversStatisticsElements.map((_, { attribs }) => {
         const name = (attribs['data-name'] as `#${string}`).slice(1)

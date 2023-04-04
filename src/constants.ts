@@ -62,18 +62,18 @@ export const PAGES = {
     },
     '/profile/view': {
         selectors: {
-            listOfCharacters: 'li[data-nick][data-lvl][data-world][data-id]',
+            listOfCharacters: 'div.character-list',
             charactersRow: {
-                id: 'chid',
-                characterName: 'chnick',
-                level: 'chlvl',
-                profession: 'chprofname',
-                server: 'chworld',
-                guildName: 'chguild',
-                guildId: 'chguildid',
-                guildLink: 'chguildurl',
-                chgender: 'chgenderparsed',
-                lastOnline: 'chlast',
+                id: '.chid',
+                name: '.chnick',
+                level: '.chlvl',
+                profession: '.chprofname',
+                serverName: '.chworld',
+                guildName: '.chguild',
+                guildId: '.chguildid',
+                guildLink: '.chguildurl',
+                gender: '.chgenderparsed',
+                lastOnline: '.chlast',
             },
             accountName:
                 'body > div.background-logged-wrapper > div > div.body-container > div > div.brown-box.profile-header.mb-4 > h2 > span:nth-child(2)',
@@ -88,6 +88,13 @@ export const PAGES = {
                 'body > div.background-logged-wrapper > div > div.body-container > div > div.brown-box.profile-header.mb-4 > div.profile-header-data-container > div:nth-child(6) > div.value',
             reputationRatio:
                 'body > div.background-logged-wrapper > div > div.body-container > div > div.brown-box.profile-header.mb-4 > div.profile-header-data-container > div:nth-child(9) > div.value',
+            deputy: 'body > div.background-logged-wrapper > div > div.body-container > div > div.brown-box.profile-header.mb-4 > div.profile-header-data-container > div:nth-child(4) > div.value',
+        },
+    },
+    '/guilds/view': {
+        selectors: {
+            tableBody:
+                'body > div.background-logged-wrapper > div > div.body-container > div > div > div.guild-members-container > table > tbody',
         },
     },
 } as const

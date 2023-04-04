@@ -5,7 +5,6 @@ import { DEFAULT_REQUEST_DELAY_IN_MS, PAGES, Profession } from '../constants'
 import { composeUrl, delay, schemes } from '../utils'
 
 export type PvpCharacter = z.output<typeof pvpCharacterSchema>
-export type PvpCharacters = z.output<typeof pvpCharactersSchema>
 
 export const pvpCharacterSchema = z.object({
     lastOnline: schemes.lastOnline,
@@ -22,9 +21,9 @@ export const pvpCharacterSchema = z.object({
 export const pvpCharactersSchema = z.array(pvpCharacterSchema)
 
 export function validatePvpCharacters(pvpCharacters: unknown): PvpCharacter[] {
-    const parsedpvpCharacters = pvpCharactersSchema.parse(pvpCharacters)
+    const parsedPvpCharacters = pvpCharactersSchema.parse(pvpCharacters)
 
-    return parsedpvpCharacters
+    return parsedPvpCharacters
 }
 
 export async function getSeasonPvpCharactersPage(
@@ -88,7 +87,9 @@ export async function getSeasonPvpCharacters(
         pageData: PvpCharacter[],
         currentPage: number
     ) => Promise<void> | void,
-    delayBetweenPagesInMs: number = DEFAULT_REQUEST_DELAY_IN_MS
+    options: { delayBetweenPagesInMs: number | undefined } = {
+        delayBetweenPagesInMs: DEFAULT_REQUEST_DELAY_IN_MS,
+    }
 ): Promise<void> {
     const { data } = await axios.get(
         composeUrl(`/ladder/players,${serverName},pvp?season=${season}&page=1`)
@@ -156,6 +157,8 @@ export async function getSeasonPvpCharacters(
 
         currentPage++
 
-        await delay(delayBetweenPagesInMs)
+        if (options.delayBetweenPagesInMs !== undefined) {
+            await delay(options.delayBetweenPagesInMs)
+        }
     }
 }
