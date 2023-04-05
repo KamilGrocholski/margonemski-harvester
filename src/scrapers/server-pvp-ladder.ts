@@ -26,12 +26,29 @@ export const pvpCharacterSchema = z.object({
 
 export const pvpCharactersSchema = z.array(pvpCharacterSchema)
 
-export function validatePvpCharacters(pvpCharacters: unknown): PvpCharacter[] {
-    const parsedPvpCharacters = pvpCharactersSchema.parse(pvpCharacters)
-
-    return parsedPvpCharacters
-}
-
+/**
+ *
+ * Pobiera określoną stronę z rankingu pvp dla danego sezonu i serwera.
+ *
+ * @param {Object} required - Wymagane parametry.
+ * @param {string} required.serverName - Nazwa serwera, dla którego pobieramy dane.
+ * @param {number} required.season - Numer sezonu, dla którego pobieramy dane.
+ * @param {number} required.page - Numer strony, którą pobieramy.
+ *
+ * Interfejs reprezentujący pojedynczą postać w rankingu PvP sezonu.
+ * @typedef {Object} PvpCharacter
+ * @property {string} lastOnline - Data ostatniego logowania postaci.
+ * @property {number} level - Poziom postaci.
+ * @property {string} name - Nazwa postaci.
+ * @property {string} rank - Ranga postaci.
+ * @property {string} characterLink - Link do profilu postaci.
+ * @property {string} profession - Nazwa profesji postaci.
+ * @property {number} rankingPoints - Liczba punktów rankingowych postaci.
+ * @property {number} winRatio - Współczynnik zwycięstw postaci.
+ * @property {string} wpr - wygrane/przegrane/remis.
+ *
+ * @returns {Promise<SinglePageResult<PvpCharacter[]>>} Tablica reprezentujący wynik pobierania jednej strony z listą postaci PvP.
+ */
 export async function getSeasonPvpCharactersPage(required: {
     serverName: string
     season: number
@@ -97,6 +114,20 @@ export async function getSeasonPvpCharactersPage(required: {
     }
 }
 
+/**
+ * Pobiera pełną listę drabinki pvp dla określonego serwera i sezonu.
+ * Funkcja pobiera strony pojedynczo i po każdej z nich wywołuje callback z danymi strony lub błędem.
+ *
+ * @param required.serverName Nazwa serwera, z którego pobierana jest lista postaci.
+ * @param required.season Numer sezonu, dla którego pobierana jest lista postaci.
+ * @param required.onPageSuccess Funkcja, która zostanie wykonana po pobraniu każdej strony z listy postaci.
+ *                               Przyjmuje dwa argumenty: dane strony (tablica postaci) oraz numer bieżącej strony.
+ * @param required.onPageError Funkcja, która zostanie wykonana w przypadku błędu podczas pobierania strony.
+ *                             Przyjmuje dwa argumenty: dane błędu oraz numer bieżącej strony.
+ * @param options.delayBetweenPagesInMs Opcjonalny parametr określający opóźnienie (w milisekundach) pomiędzy kolejnymi
+ *                                      zapytaniami do serwera. Domyślnie ustawione na wartość DEFAULT_REQUEST_DELAY_IN_MS.
+ * @returns Obiekt zawierający informacje o pobranych stronach oraz łącznej liczbie postaci.
+ */
 export async function getSeasonPvpCharacters(
     required: {
         serverName: string

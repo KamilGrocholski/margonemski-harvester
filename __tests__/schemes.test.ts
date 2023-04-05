@@ -1,5 +1,5 @@
-import { schemes } from '../utils'
-import { PROFESSIONS } from '../constants'
+import { schemes } from '../src/utils'
+import { PROFESSIONS } from '../src/constants'
 
 describe('schemes', () => {
     describe('guildLink', () => {

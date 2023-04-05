@@ -32,6 +32,8 @@ export const PAGES = {
             serversStatistics: {
                 list: 'div[data-name][data-maxonline][data-total][data-online]',
             },
+            onlinePlayersPopups:
+                'div.light-brown-box.news-container.no-footer[class$="-popup"]',
         },
     },
     '/ladder/players': {

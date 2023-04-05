@@ -41,13 +41,13 @@ export type SuccessResult<T> = {
 
 export type ErrorResult = ErrorData
 
+export type Result<T> = SuccessResult<T> | ErrorResult
+
 export type ErrorData = {
     success: false
     errorName: ErrorName
     cause: unknown
 }
-
-export type Result<T> = SuccessResult<T> | ErrorResult
 
 export function getErrorData(error: unknown): ErrorData {
     const base: Omit<ErrorData, 'errorName'> = {

@@ -2,7 +2,7 @@ import {
     getGuildCharacters,
     guildCharacterSchema,
     type GuildCharacter,
-} from '../scrapers/guild'
+} from '../src/scrapers/guild'
 
 describe('guild', () => {
     it('should validate and return guild characters', async () => {

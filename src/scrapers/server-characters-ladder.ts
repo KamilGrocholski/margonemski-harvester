@@ -25,15 +25,26 @@ export const characterRowSchema = z.object({
 
 export const charactersLadderSchema = z.array(characterRowSchema)
 
-export function validateCharactersLadder(
-    charactersLadder: unknown
-): CharactersLadder {
-    const parsedCharactersLadder =
-        charactersLadderSchema.parse(charactersLadder)
-
-    return parsedCharactersLadder
-}
-
+/**
+ *
+ * Pobiera pojedynczą stronę listy postaci dla podanego serwera.
+ *
+ * @param {object} required - obiekt z wymaganymi parametrami
+ * @param {string} required.serverName - nazwa serwera
+ * @param {number} required.page - numer strony
+ * @returns {Promise<SinglePageResult<CharacterLadder>>} - obiekt Promise z wynikiem zawierającym obiekt
+ * typu SinglePageResult, który jest jedną stroną listy postaci o typie CharacterLadder
+ *
+ * @typedef {Object} CharacterRow - Obiekt reprezentujący pojedynczy wiersz z informacją o postaci.
+ * @property {string} rank - Ranga postaci.
+ * @property {string} name - Nazwa postaci.
+ * @property {string} characterLink - Link do profilu postaci.
+ * @property {number} level - Poziom postaci.
+ * @property {string} profession - Nazwa profesji postaci.
+ * @property {string} ph - Punkty honoru postaci.
+ * @property {string} lastOnline - Data ostatniego logowania postaci.
+ * @typedef {CharacterRow[]} CharacterLadder - Tablica reprezentująca ranking postaci na serwerze.
+ */
 export async function getServerCharactersLadderPage(required: {
     serverName: string
     page: number
@@ -89,6 +100,21 @@ export async function getServerCharactersLadderPage(required: {
     }
 }
 
+/**
+ *
+ * Pobiera stronę po stronie wszystkie postacie z drabinki dla danego serwera.
+ *
+ * Po pobraniu każdej strony wykonuje callback onPageSuccess z danymi strony oraz numerem strony.
+ * W przypadku błędu wykonuje callback onPageError z informacją o błędzie oraz numerem strony.
+ * Zwraca informację o liczbie pobranych stron oraz liczbie postaci.
+ * @param required - obiekt z wymaganymi parametrami
+ * @param required.serverName - nazwa serwera
+ * @param required.onPageSuccess - callback wywoływany po pobraniu jednej strony
+ * @param required.onPageError - callback wywoływany w przypadku błędu pobierania strony
+ * @param options - opcjonalne parametry
+ * @param options.delayBetweenPagesInMs - opóźnienie między pobieraniem kolejnych stron (domyślnie 100 ms)
+ * @returns informację o liczbie pobranych stron
+ */
 export async function getServerCharactersLadder(
     required: {
         serverName: string

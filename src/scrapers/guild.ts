@@ -19,14 +19,24 @@ export const guildCharacterSchema = z.object({
 
 export const guildCharactersSchema = z.array(guildCharacterSchema)
 
-export function validateGuildCharacters(
-    guildCharacters: unknown
-): GuildCharacter[] {
-    const parsedGuildCharacters = guildCharactersSchema.parse(guildCharacters)
-
-    return parsedGuildCharacters
-}
-
+/**
+ * Pobiera listę postaci z klanu.
+ *
+ * @param {Object} required - Obiekt z wymaganymi parametrami wejściowymi.
+ * @param {string} required.serverName - Nazwa serwera, na którym znajduje się klan.
+ * @param {number} required.guildId - ID klanu, dla którego pobieramy postacie.
+ * @returns {Promise<Result<GuildCharacter[]>>} Obiekt typu Promise, który rozwiązuje się do wyniku operacji.
+ * Wynik może zawierać tablicę obiektów GuildCharacter lub ErrorData w przypadku błędu.
+ *
+ * @typedef {Object} GuildCharacter - Obiekt reprezentujący postać w klanie.
+ * @property {string} rank - Ranga postaci w klanie.
+ * @property {string} name - Nazwa postaci.
+ * @property {string} characterLink - Link do profilu postaci.
+ * @property {number} level - Poziom postaci.
+ * @property {string} profession - Nazwa profesji postaci.
+ * @property {string} ph - Punkty honoru postaci.
+ * @property {string} role - Rola postaci w klanie.
+ */
 export async function getGuildCharacters(required: {
     serverName: string
     guildId: number

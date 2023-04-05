@@ -1,4 +1,4 @@
-import { getServerGuildsLadderPage } from '../scrapers/server-guilds-ladder'
+import { getServerGuildsLadderPage } from '../src/scrapers/server-guilds-ladder'
 
 describe('server-guilds-ladder-page', () => {
     it('should not throw', async () => {

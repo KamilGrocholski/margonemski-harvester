@@ -2,7 +2,7 @@
     "name": "margonemski-harvester",
     "description": "Można se pobrać rzeczy z tej strony -> https://www.margonem.pl",
     "license": "MIT",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "main": "dist/index.js",
     "module": "dist/index.mjs",
     "types": "dist/index.d.ts",
@@ -12,7 +12,7 @@
     ],
     "repository": {
         "type": "git",
-        "utl": "https://github.com/KamilGrocholski/margonemski-harvester/tree/main"
+        "utl": "https://github.com/KamilGrocholski/margonemski-harvester"
     },
     "scripts": {
         "build": "tsup src/index.ts --format cjs,esm --dts",
