@@ -54,7 +54,7 @@ export async function getServerGuildsLadderPage(required: {
 
             const rank = parseInt(rowData.eq(0).text(), 10)
             const name = rowData.eq(1).text().trim()
-            const guildLink = rowData.eq(1).attr('href') as string
+            const guildLink = rowData.eq(1).find('a').attr('href') as string
             const power = rowData.eq(2).text()
             const players = parseInt(rowData.eq(2).text(), 10)
             const level = parseInt(rowData.eq(2).text(), 10)

@@ -1,10 +1,12 @@
 import { AxiosError } from 'axios'
+import { ZodError } from 'zod'
 
 export type ErrorName =
     | 'UNDESCRIBED_ERROR'
     | 'TABLE_PAGE_ERROR'
     | 'AXIOS_ERROR'
     | 'INTERNAL_ERROR'
+    | 'VALIDATION_ERROR'
 
 export type PaginationResult = PaginationSuccessResult | PaginationErrorResult
 
@@ -51,6 +53,13 @@ export function getErrorData(error: unknown): ErrorData {
     const base: Omit<ErrorData, 'errorName'> = {
         cause: error,
         success: false,
+    }
+
+    if (error instanceof ZodError) {
+        return {
+            ...base,
+            errorName: 'VALIDATION_ERROR',
+        }
     }
 
     if (error instanceof AxiosError) {
