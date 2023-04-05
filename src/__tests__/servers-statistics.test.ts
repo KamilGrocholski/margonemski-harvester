@@ -1,9 +1,22 @@
-import { getServersStatistics } from '../scrapers/servers-statistics'
+import {
+    getOnlinePlayers,
+    getServersStatistics,
+} from '../scrapers/servers-statistics'
 
 describe('servers-statistics', () => {
-    it('should not throw', async () => {
-        const result = await getServersStatistics()
+    describe('servers-statistics', () => {
+        it('should not throw', async () => {
+            const result = await getServersStatistics()
 
-        expect(() => result).not.toThrow()
+            expect(() => result).not.toThrow()
+        })
+    })
+
+    describe('online players', () => {
+        it('should not throw', async () => {
+            const result = await getOnlinePlayers()
+
+            expect(() => result).not.toThrow()
+        })
     })
 })

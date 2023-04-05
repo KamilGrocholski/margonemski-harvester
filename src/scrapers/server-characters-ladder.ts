@@ -25,15 +25,6 @@ export const characterRowSchema = z.object({
 
 export const charactersLadderSchema = z.array(characterRowSchema)
 
-export function validateCharactersLadder(
-    charactersLadder: unknown
-): CharactersLadder {
-    const parsedCharactersLadder =
-        charactersLadderSchema.parse(charactersLadder)
-
-    return parsedCharactersLadder
-}
-
 export async function getServerCharactersLadderPage(required: {
     serverName: string
     page: number

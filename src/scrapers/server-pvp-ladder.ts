@@ -26,12 +26,6 @@ export const pvpCharacterSchema = z.object({
 
 export const pvpCharactersSchema = z.array(pvpCharacterSchema)
 
-export function validatePvpCharacters(pvpCharacters: unknown): PvpCharacter[] {
-    const parsedPvpCharacters = pvpCharactersSchema.parse(pvpCharacters)
-
-    return parsedPvpCharacters
-}
-
 export async function getSeasonPvpCharactersPage(required: {
     serverName: string
     season: number

@@ -14,15 +14,6 @@ export const globalStatisticsSchema = z.object({
     newAccounts: z.string(),
 })
 
-export function validateGlobalStatistics(
-    globalStatistics: unknown
-): GlobalStatistics {
-    const parsedGlobalstatistics =
-        globalStatisticsSchema.parse(globalStatistics)
-
-    return parsedGlobalstatistics
-}
-
 export async function getGlobalStatistics(): Promise<GlobalStatistics> {
     const { data } = await axios.get(composeUrl('/art/world'))
     const $ = load(data)

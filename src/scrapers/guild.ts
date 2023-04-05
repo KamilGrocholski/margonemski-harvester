@@ -19,14 +19,6 @@ export const guildCharacterSchema = z.object({
 
 export const guildCharactersSchema = z.array(guildCharacterSchema)
 
-export function validateGuildCharacters(
-    guildCharacters: unknown
-): GuildCharacter[] {
-    const parsedGuildCharacters = guildCharactersSchema.parse(guildCharacters)
-
-    return parsedGuildCharacters
-}
-
 export async function getGuildCharacters(required: {
     serverName: string
     guildId: number

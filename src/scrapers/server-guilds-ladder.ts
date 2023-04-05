@@ -25,12 +25,6 @@ export const guildRowSchema = z.object({
 
 export const guildsLadderSchema = z.array(guildRowSchema)
 
-export function validateGuildsLadder(guildsLadder: unknown): GuildsLadder {
-    const parsedGuildsLadder = guildsLadderSchema.parse(guildsLadder)
-
-    return parsedGuildsLadder
-}
-
 export async function getServerGuildsLadderPage(required: {
     serverName: string
     page: number
