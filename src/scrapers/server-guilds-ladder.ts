@@ -3,6 +3,12 @@ import { load } from 'cheerio'
 import axios from 'axios'
 import { DEFAULT_REQUEST_DELAY_IN_MS, PAGES } from '../constants'
 import { composeUrl, delay, schemes } from '../utils'
+import {
+    ErrorData,
+    PaginationResult,
+    SinglePageResult,
+    getErrorData,
+} from '../errors-and-results'
 
 export type GuildRow = z.output<typeof guildRowSchema>
 export type GuildsLadder = z.output<typeof guildsLadderSchema>
@@ -25,89 +31,19 @@ export function validateGuildsLadder(guildsLadder: unknown): GuildsLadder {
     return parsedGuildsLadder
 }
 
-export async function getServerGuildsLadderPage(
-    serverName: string,
-    page: number,
-    options: {
-        shouldValidate: boolean
-    } = { shouldValidate: true }
-): Promise<GuildsLadder> {
-    const { data } = await axios.get(
-        composeUrl(`/ladder/guilds,${serverName}?page=${page}`)
-    )
-    const $ = load(data)
+export async function getServerGuildsLadderPage(required: {
+    serverName: string
+    page: number
+}): Promise<SinglePageResult<GuildsLadder>> {
+    try {
+        const { serverName, page } = required
 
-    const selectors = PAGES['/ladder/guilds'].selectors
-
-    const tableRows = $(selectors.tableBody).find('tr')
-
-    const guildsLadder: GuildsLadder = []
-
-    tableRows.each((_, row) => {
-        const rowData = $(row).find('td')
-
-        const rank = parseInt(rowData.eq(0).text(), 10)
-        const name = rowData.eq(1).text().trim()
-        const guildLink = rowData.eq(1).attr('href') as string
-        const power = rowData.eq(2).text()
-        const players = parseInt(rowData.eq(2).text(), 10)
-        const level = parseInt(rowData.eq(2).text(), 10)
-        const ph = parseInt(rowData.eq(4).text())
-
-        guildsLadder.push({
-            rank,
-            name,
-            guildLink,
-            power,
-            players,
-            level,
-            ph,
-        })
-    })
-
-    if (options.shouldValidate) {
-        guildsLadderSchema.parse(guildsLadder)
-    }
-
-    return guildsLadder
-}
-
-export async function getServerGuildsLadder(
-    serverName: string,
-    onPageComplete: (
-        pageData: GuildsLadder,
-        currentPage: number
-    ) => Promise<void> | void,
-    options: { delayBetweenPagesInMs: number | undefined } = {
-        delayBetweenPagesInMs: DEFAULT_REQUEST_DELAY_IN_MS,
-    }
-): Promise<void> {
-    const { data } = await axios.get(
-        composeUrl(`/ladder/guilds,${serverName}?page=1`)
-    )
-    const $ = load(data)
-
-    const selectors = PAGES['/ladder/guilds'].selectors
-
-    let numberOfPages = parseInt($(selectors.numberOfPages).text(), 10)
-    let currentPage: number = 1
-
-    while (currentPage <= numberOfPages) {
         const { data } = await axios.get(
-            composeUrl(`/ladder/guilds,${serverName}?page=${currentPage}`)
+            composeUrl(`/ladder/guilds,${serverName}?page=${page}`)
         )
         const $ = load(data)
 
-        const currentNumberOfPages = parseInt(
-            $(selectors.numberOfPages).text(),
-            10
-        )
-
-        if (currentNumberOfPages < currentPage) {
-            return
-        }
-
-        numberOfPages = currentNumberOfPages
+        const selectors = PAGES['/ladder/guilds'].selectors
 
         const tableRows = $(selectors.tableBody).find('tr')
 
@@ -118,7 +54,7 @@ export async function getServerGuildsLadder(
 
             const rank = parseInt(rowData.eq(0).text(), 10)
             const name = rowData.eq(1).text().trim()
-            const guildLink = rowData.eq(1).attr('href') as string
+            const guildLink = rowData.eq(1).find('a').attr('href') as string
             const power = rowData.eq(2).text()
             const players = parseInt(rowData.eq(2).text(), 10)
             const level = parseInt(rowData.eq(2).text(), 10)
@@ -135,12 +71,86 @@ export async function getServerGuildsLadder(
             })
         })
 
-        onPageComplete(guildsLadder, currentPage)
+        return {
+            success: true,
+            data: guildsLadderSchema.parse(guildsLadder),
+            page,
+        }
+    } catch (error) {
+        const errorData = getErrorData(error)
+        return {
+            page: required.page,
+            ...errorData,
+        }
+    }
+}
 
-        currentPage++
+export async function getServerGuildsLadder(
+    required: {
+        serverName: string
+        onPageSuccess: (
+            pageData: GuildsLadder,
+            currentPage: number
+        ) => Promise<void> | void
+        onPageError: (
+            errorData: ErrorData,
+            currentPage: number
+        ) => Promise<void> | void
+    },
+    options: { delayBetweenPagesInMs: number | undefined } = {
+        delayBetweenPagesInMs: DEFAULT_REQUEST_DELAY_IN_MS,
+    }
+): Promise<PaginationResult> {
+    try {
+        const { serverName, onPageError, onPageSuccess } = required
 
-        if (options.delayBetweenPagesInMs !== undefined) {
-            await delay(options.delayBetweenPagesInMs)
+        const { data } = await axios.get(
+            composeUrl(`/ladder/guilds,${serverName}?page=1`)
+        )
+        const $ = load(data)
+
+        const selectors = PAGES['/ladder/guilds'].selectors
+
+        let numberOfPages = parseInt($(selectors.numberOfPages).text(), 10)
+        let currentPage: number = 1
+
+        while (currentPage <= numberOfPages) {
+            if (options.delayBetweenPagesInMs !== undefined) {
+                await delay(options.delayBetweenPagesInMs)
+            }
+
+            const result = await getServerGuildsLadderPage({
+                serverName,
+                page: currentPage,
+            })
+
+            if (result.success) {
+                onPageSuccess(result.data, result.page)
+            } else {
+                onPageError(
+                    {
+                        cause: result.cause,
+                        errorName: result.errorName,
+                        success: result.success,
+                    },
+                    result.page
+                )
+            }
+
+            currentPage++
+        }
+
+        return {
+            success: true,
+            message: `Pobrano wszystkie strony: [serverName: ${serverName}]`,
+            totalPages: numberOfPages,
+        }
+    } catch (error) {
+        const errorData = getErrorData(error)
+
+        return {
+            ...errorData,
+            message: `Nie udało się pobrać wszystkich strony: [serverName: ${required.serverName}]`,
         }
     }
 }

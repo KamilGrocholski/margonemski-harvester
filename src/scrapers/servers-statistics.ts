@@ -3,6 +3,7 @@ import { load } from 'cheerio'
 import axios from 'axios'
 import { PAGES } from '../constants'
 import { composeUrl } from '../utils'
+import { Result, getErrorData } from '../errors-and-results'
 
 export type ServerStatistics = z.output<typeof serverStatisticsSchema>
 
@@ -24,37 +25,40 @@ export function validateServersStatistics(
     return parsedServerStatistics
 }
 
-export async function getServersStatistics(
-    options: {
-        shouldValidate: boolean
-    } = { shouldValidate: true }
-): Promise<ServerStatistics[]> {
-    const { data } = await axios.get(composeUrl('/stats'))
-    const $ = load(data)
+export async function getServersStatistics(): Promise<
+    Result<ServerStatistics[]>
+> {
+    try {
+        const { data } = await axios.get(composeUrl('/stats'))
+        const $ = load(data)
 
-    const serversStatisticsElements = $(
-        PAGES['/stats'].selectors.serversStatistics.list
-    )
+        const serversStatisticsElements = $(
+            PAGES['/stats'].selectors.serversStatistics.list
+        )
 
-    const serversStatistics: ServerStatistics[] = []
+        const serversStatistics: ServerStatistics[] = []
 
-    serversStatisticsElements.map((_, { attribs }) => {
-        const name = (attribs['data-name'] as `#${string}`).slice(1)
-        const maxOnline = parseInt(attribs['data-maxonline'] as string, 10)
-        const total = parseInt(attribs['data-total'] as string, 10)
-        const online = parseInt(attribs['data-online'] as string, 10)
+        serversStatisticsElements.map((_, { attribs }) => {
+            const name = (attribs['data-name'] as `#${string}`).slice(1)
+            const maxOnline = parseInt(attribs['data-maxonline'] as string, 10)
+            const total = parseInt(attribs['data-total'] as string, 10)
+            const online = parseInt(attribs['data-online'] as string, 10)
 
-        serversStatistics.push({
-            name,
-            maxOnline,
-            total,
-            online,
+            serversStatistics.push({
+                name,
+                maxOnline,
+                total,
+                online,
+            })
         })
-    })
 
-    if (options.shouldValidate) {
-        serversStatisticsSchema.parse(serversStatistics)
+        return {
+            success: true,
+            data: serversStatisticsSchema.parse(serversStatistics),
+        }
+    } catch (error) {
+        const errorData = getErrorData(error)
+
+        return errorData
     }
-
-    return serversStatistics
 }

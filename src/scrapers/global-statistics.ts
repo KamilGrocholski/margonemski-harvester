@@ -23,25 +23,17 @@ export function validateGlobalStatistics(
     return parsedGlobalstatistics
 }
 
-export async function getGlobalStatistics(
-    options: {
-        shouldValidate: boolean
-    } = { shouldValidate: true }
-): Promise<GlobalStatistics> {
+export async function getGlobalStatistics(): Promise<GlobalStatistics> {
     const { data } = await axios.get(composeUrl('/art/world'))
     const $ = load(data)
 
-    const onlineElement = $(PAGES['/art/world'].selectors.statistics.online)
-    const recordOnlineElement = $(
-        PAGES['/art/world'].selectors.statistics.onlineRecord
-    )
-    const playersElement = $(PAGES['/art/world'].selectors.statistics.players)
-    const charactersElement = $(
-        PAGES['/art/world'].selectors.statistics.characters
-    )
-    const newAccountsElement = $(
-        PAGES['/art/world'].selectors.statistics.newAccount
-    )
+    const selectors = PAGES['/art/world'].selectors.statistics
+
+    const onlineElement = $(selectors.online)
+    const recordOnlineElement = $(selectors.onlineRecord)
+    const playersElement = $(selectors.players)
+    const charactersElement = $(selectors.characters)
+    const newAccountsElement = $(selectors.newAccount)
 
     const globalStatistics: GlobalStatistics = {
         online: onlineElement.text(),
@@ -51,9 +43,5 @@ export async function getGlobalStatistics(
         newAccounts: newAccountsElement.text(),
     }
 
-    if (options.shouldValidate) {
-        globalStatisticsSchema.parse(globalStatistics)
-    }
-
-    return globalStatistics
+    return globalStatisticsSchema.parse(globalStatistics)
 }

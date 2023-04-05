@@ -3,6 +3,7 @@ import { load } from 'cheerio'
 import axios from 'axios'
 import { PAGES, Profession } from '../constants'
 import { composeUrl, schemes } from '../utils'
+import { Result, getErrorData } from '../errors-and-results'
 
 export type GuildCharacter = z.output<typeof guildCharacterSchema>
 
@@ -26,49 +27,53 @@ export function validateGuildCharacters(
     return parsedGuildCharacters
 }
 
-export async function getGuildCharacters(
-    serverName: string,
-    guildId: number,
-    options: {
-        shouldValidate: boolean
-    } = { shouldValidate: true }
-): Promise<GuildCharacter[]> {
-    const { data } = await axios.get(
-        composeUrl(`/guilds/view,${serverName},${guildId}`)
-    )
-    const $ = load(data)
+export async function getGuildCharacters(required: {
+    serverName: string
+    guildId: number
+}): Promise<Result<GuildCharacter[]>> {
+    try {
+        const { serverName, guildId } = required
 
-    const selectors = PAGES['/guilds/view'].selectors
+        const { data } = await axios.get(
+            composeUrl(`/guilds/view,${serverName},${guildId}`)
+        )
+        const $ = load(data)
 
-    const tableRows = $(selectors.tableBody).find('tr')
+        const selectors = PAGES['/guilds/view'].selectors
 
-    const guildCharacters: GuildCharacter[] = []
+        const tableRows = $(selectors.tableBody).find('tr')
 
-    tableRows.each((_, row) => {
-        const rowData = $(row).find('td')
+        const guildCharacters: GuildCharacter[] = []
 
-        const rank = parseInt(rowData.eq(0).text(), 10)
-        const name = rowData.eq(1).text().trim()
-        const characterLink = rowData.eq(1).find('a').attr('href') as string
-        const level = parseInt(rowData.eq(2).text(), 10)
-        const profession = rowData.eq(3).text().trim() as Profession
-        const ph = parseInt(rowData.eq(4).text())
-        const role = rowData.eq(5).text().trim()
+        tableRows.each((_, row) => {
+            const rowData = $(row).find('td')
 
-        guildCharacters.push({
-            rank,
-            name,
-            characterLink,
-            level,
-            profession,
-            ph,
-            role,
+            const rank = parseInt(rowData.eq(0).text(), 10)
+            const name = rowData.eq(1).text().trim()
+            const characterLink = rowData.eq(1).find('a').attr('href') as string
+            const level = parseInt(rowData.eq(2).text(), 10)
+            const profession = rowData.eq(3).text().trim() as Profession
+            const ph = parseInt(rowData.eq(4).text())
+            const role = rowData.eq(5).text().trim()
+
+            guildCharacters.push({
+                rank,
+                name,
+                characterLink,
+                level,
+                profession,
+                ph,
+                role,
+            })
         })
-    })
 
-    if (options.shouldValidate) {
-        guildCharactersSchema.parse(guildCharacters)
+        return {
+            success: true,
+            data: guildCharactersSchema.parse(guildCharacters),
+        }
+    } catch (error) {
+        const errorData = getErrorData(error)
+
+        return errorData
     }
-
-    return guildCharacters
 }
