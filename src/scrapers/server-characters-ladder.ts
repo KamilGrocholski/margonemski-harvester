@@ -3,6 +3,12 @@ import { load } from 'cheerio'
 import axios from 'axios'
 import { DEFAULT_REQUEST_DELAY_IN_MS, PAGES, Profession } from '../constants'
 import { composeUrl, delay, schemes } from '../utils'
+import {
+    ErrorData,
+    PaginationResult,
+    SinglePageResult,
+    getErrorData,
+} from '../errors-and-results'
 
 export type CharacterRow = z.output<typeof characterRowSchema>
 export type CharactersLadder = z.output<typeof charactersLadderSchema>
@@ -28,89 +34,19 @@ export function validateCharactersLadder(
     return parsedCharactersLadder
 }
 
-export async function getServerCharactersLadderPage(
-    serverName: string,
-    page: number,
-    options: {
-        shouldValidate: boolean
-    } = { shouldValidate: true }
-): Promise<CharactersLadder> {
-    const { data } = await axios.get(
-        composeUrl(`/ladder/players,${serverName}?page=${page}`)
-    )
-    const $ = load(data)
+export async function getServerCharactersLadderPage(required: {
+    serverName: string
+    page: number
+}): Promise<SinglePageResult<CharactersLadder>> {
+    try {
+        const { serverName, page } = required
 
-    const selectors = PAGES['/ladder/players'].selectors
-
-    const tableRows = $(selectors.tableBody).find('tr')
-
-    const charactersLadder: CharactersLadder = []
-
-    tableRows.each((_, row) => {
-        const rowData = $(row).find('td')
-
-        const rank = parseInt(rowData.eq(0).text(), 10)
-        const name = rowData.eq(1).text().trim()
-        const characterLink = rowData.eq(1).attr('href') as string
-        const level = parseInt(rowData.eq(2).text(), 10)
-        const profession = rowData.eq(3).text().trim() as Profession
-        const ph = parseInt(rowData.eq(4).text())
-        const lastOnline = rowData.eq(5).text().trim()
-
-        charactersLadder.push({
-            rank,
-            name,
-            characterLink,
-            level,
-            profession,
-            ph,
-            lastOnline,
-        })
-    })
-
-    if (options.shouldValidate) {
-        charactersLadderSchema.parse(charactersLadder)
-    }
-
-    return charactersLadder
-}
-
-export async function getServerCharactersLadder(
-    serverName: string,
-    onPageComplete: (
-        pageData: CharactersLadder,
-        currentPage: number
-    ) => Promise<void> | void,
-    options: { delayBetweenPagesInMs: number | undefined } = {
-        delayBetweenPagesInMs: DEFAULT_REQUEST_DELAY_IN_MS,
-    }
-): Promise<void> {
-    const { data } = await axios.get(
-        composeUrl(`/ladder/players,${serverName}?page=1`)
-    )
-    const $ = load(data)
-
-    const selectors = PAGES['/ladder/players'].selectors
-
-    let numberOfPages = parseInt($(selectors.numberOfPages).text(), 10)
-    let currentPage: number = 1
-
-    while (currentPage <= numberOfPages) {
         const { data } = await axios.get(
-            composeUrl(`/ladder/players,${serverName}?page=${currentPage}`)
+            composeUrl(`/ladder/players,${serverName}?page=${page}`)
         )
         const $ = load(data)
 
-        const currentNumberOfPages = parseInt(
-            $(selectors.numberOfPages).text(),
-            10
-        )
-
-        if (currentNumberOfPages < currentPage) {
-            return
-        }
-
-        numberOfPages = currentNumberOfPages
+        const selectors = PAGES['/ladder/players'].selectors
 
         const tableRows = $(selectors.tableBody).find('tr')
 
@@ -138,12 +74,87 @@ export async function getServerCharactersLadder(
             })
         })
 
-        onPageComplete(charactersLadder, currentPage)
+        return {
+            success: true,
+            data: charactersLadderSchema.parse(charactersLadder),
+            page,
+        }
+    } catch (error) {
+        const errorData = getErrorData(error)
 
-        currentPage++
+        return {
+            ...errorData,
+            page: required.page,
+        }
+    }
+}
 
-        if (options.delayBetweenPagesInMs !== undefined) {
-            await delay(options.delayBetweenPagesInMs)
+export async function getServerCharactersLadder(
+    required: {
+        serverName: string
+        onPageSuccess: (
+            pageData: CharactersLadder,
+            currentPage: number
+        ) => Promise<void> | void
+        onPageError: (
+            errorData: ErrorData,
+            currentPage: number
+        ) => Promise<void> | void
+    },
+    options: { delayBetweenPagesInMs: number | undefined } = {
+        delayBetweenPagesInMs: DEFAULT_REQUEST_DELAY_IN_MS,
+    }
+): Promise<PaginationResult> {
+    try {
+        const { serverName, onPageSuccess, onPageError } = required
+
+        const { data } = await axios.get(
+            composeUrl(`/ladder/players,${serverName}?page=1`)
+        )
+        const $ = load(data)
+
+        const selectors = PAGES['/ladder/players'].selectors
+
+        let numberOfPages = parseInt($(selectors.numberOfPages).text(), 10)
+        let currentPage: number = 1
+
+        while (currentPage <= numberOfPages) {
+            if (options.delayBetweenPagesInMs) {
+                await delay(options.delayBetweenPagesInMs)
+            }
+
+            const result = await getServerCharactersLadderPage({
+                serverName,
+                page: currentPage,
+            })
+
+            if (result.success) {
+                onPageSuccess(result.data, result.page)
+            } else {
+                onPageError(
+                    {
+                        errorName: result.errorName,
+                        cause: result.cause,
+                        success: result.success,
+                    },
+                    result.page
+                )
+            }
+
+            currentPage++
+        }
+
+        return {
+            success: true,
+            message: `Pobrano wszystkie strony: [serverName: ${serverName}]`,
+            totalPages: numberOfPages,
+        }
+    } catch (error) {
+        const errorData = getErrorData(error)
+
+        return {
+            message: `Nie udało się pobrać wszystkich strony: [serverName: ${required.serverName}]`,
+            ...errorData,
         }
     }
 }

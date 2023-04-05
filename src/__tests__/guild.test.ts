@@ -6,7 +6,10 @@ import {
 
 describe('guild', () => {
     it('should validate and return guild characters', async () => {
-        const guildCharacters = await getGuildCharacters('tempest', 2615)
+        const guildCharacters = await getGuildCharacters({
+            serverName: 'tempest',
+            guildId: 2615,
+        })
         expect(() => guildCharacters).not.toThrow()
     })
 
