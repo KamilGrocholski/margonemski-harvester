@@ -24,7 +24,8 @@ export const profileCharacterSchema = z.object({
 export const accountInfoSchema = z.object({
     accountName: z.string(),
     role: z.string(),
-    accountCreatedAt: z.string().min(10),
+    accountCreatedAt: schemes['DD-MM-YY'],
+    lastLogin: schemes['HH:MM DD-MM-YY'],
     daysInGame: z.number().int().nonnegative(),
     forumPosts: z.number().int().nonnegative(),
     reputation: z.number().int(),
@@ -64,6 +65,11 @@ export async function getAccountInfo(required: {
         const accountName = $(selectors.accountName).text().trim()
         const role = $(selectors.role).text().trim()
         const accountCreatedAt = $(selectors.accountCreatedAt).text().trim()
+
+        let lastLogin = $(selectors.lastLogin).text().trim()
+        lastLogin = lastLogin.slice(0, 5) + ' ' + lastLogin.slice(5)
+        console.log(lastLogin)
+
         const daysInGame = parseInt($(selectors.daysInGame).text(), 10)
         const deputy = $(selectors.deputy).text().trim()
         const forumPosts = parseInt($(selectors.forumPosts).text(), 10)
@@ -155,6 +161,7 @@ export async function getAccountInfo(required: {
             accountName,
             role,
             accountCreatedAt,
+            lastLogin,
             daysInGame,
             forumPosts,
             reputation,

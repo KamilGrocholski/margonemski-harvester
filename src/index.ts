@@ -1,5 +1,6 @@
 export * from './utils'
 export * from './constants'
+export * from './errors-and-results'
 
 export * from './scrapers/account'
 export * from './scrapers/global-statistics'

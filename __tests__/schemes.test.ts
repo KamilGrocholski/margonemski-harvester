@@ -140,4 +140,32 @@ describe('schemes', () => {
             }).toThrow()
         })
     })
+
+    describe('HH:MM format', () => {
+        it('should accept valid format', () => {
+            expect(() => {
+                schemes['HH:MM'].parse('03:12')
+            }).not.toThrow()
+        })
+
+        it('should reject invalid format', () => {
+            expect(() => {
+                schemes['HH:MM'].parse('1:11')
+            }).toThrow()
+        })
+    })
+
+    describe('HH:MM DD-MM-YY format', () => {
+        it('should accept valid format', () => {
+            expect(() => {
+                schemes['HH:MM DD-MM-YY'].parse('03:12 12-03-2023')
+            }).not.toThrow()
+        })
+
+        it('should reject invalid format', () => {
+            expect(() => {
+                schemes['HH:MM DD-MM-YY'].parse('3:12 12-03-2023')
+            }).toThrow()
+        })
+    })
 })

@@ -7,7 +7,11 @@ export type Page =
     | `/guilds/view,${string},${number}`
     | `/profile/view,${number}#char_${number},${string}`
 
+export const HASH_FUNCTION_DIVISOR = 128 as const
+
 export const BASE_URL = 'https://www.margonem.pl' as const
+
+export const BASE_GARMORY_CDN_URL = 'https://mec.garmory-cdn.cloud/pl' as const
 
 export const DEFAULT_REQUEST_DELAY_IN_MS = 100 as const
 
@@ -80,6 +84,8 @@ export const PAGES = {
             accountName:
                 'body > div.background-logged-wrapper > div > div.body-container > div > div.brown-box.profile-header.mb-4 > h2 > span:nth-child(2)',
             role: 'body > div.background-logged-wrapper > div > div.body-container > div > div.brown-box.profile-header.mb-4 > div.profile-header-data-container > div.profile-header-data.profile-header-capitalized > div.value > span',
+            lastLogin:
+                'body > div.background-logged-wrapper > div > div.body-container > div > div.brown-box.profile-header.mb-4 > div.profile-header-data-container > div.profile-header-data.profile-header-multiple-lines > div.value',
             accountCreatedAt:
                 'body > div.background-logged-wrapper > div > div.body-container > div > div.brown-box.profile-header.mb-4 > div.profile-header-data-container > div:nth-child(5) > div.value',
             daysInGame:
