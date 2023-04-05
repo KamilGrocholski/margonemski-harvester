@@ -1,4 +1,4 @@
-import { getGuildCharacters } from '../scrapers/guild'
+import { getGuildCharacters } from '../src/scrapers/guild'
 
 describe('account', () => {
     it('should return account info', async () => {

@@ -34,6 +34,16 @@ export const accountInfoSchema = z.object({
     private: z.array(profileCharacterSchema),
 })
 
+/**
+ * Pobiera informacje o koncie na określonym serwerze.
+ *
+ * @param required - Obiekt zawierający wymagane parametry dla zapytania:
+ *   - bucketId: ID WIADRAAA, w którym przechowywane są dane postaci.
+ *   - characterId: ID postaci, dla której należy pobrać informacje o koncie.
+ *   - serverName: Nazwa serwera, na którym znajduje się postać.
+ *
+ * @returns Promise<Result<AccountInfo>> - Obiekt Promise z wynikiem zawierającym informacje o koncie postaci.
+ */
 export async function getAccountInfo(required: {
     bucketId: number
     characterId: number

@@ -1,4 +1,4 @@
-import { getSeasonPvpCharactersPage } from '../scrapers/server-pvp-ladder'
+import { getSeasonPvpCharactersPage } from '../src/scrapers/server-pvp-ladder'
 
 describe('server-season-pvp-ladder-page', () => {
     it('should not throw', async () => {

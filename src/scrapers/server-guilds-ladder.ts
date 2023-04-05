@@ -25,6 +25,24 @@ export const guildRowSchema = z.object({
 
 export const guildsLadderSchema = z.array(guildRowSchema)
 
+/**
+ *
+ * Funkcja pobierająca jedną stronę rankingu klanu dla określonego serwera z gry.
+ *
+ * @param {Object} required - Obiekt z wymaganymi danymi do wykonania funkcji.
+ * @param {string} required.serverName - Nazwa serwera, dla którego ma zostać pobrany ranking.
+ * @param {number} required.page - Numer strony rankingu, która ma zostać pobrana.
+ * @returns {Promise<SinglePageResult<GuildsLadder>>} - Obiekt z danymi pobranymi z rankingu klanu.
+ * @typedef {Object} GuildRow - Obiekt reprezentujący pojedynczą gildię w rankingu.
+ * @property {string} power - Siła klanu.
+ * @property {number} players - Liczba graczy w klanu.
+ * @property {string} guildLink - Link do profilu klanu.
+ * @property {string} rank - Ranga klanu w rankingu.
+ * @property {string} name - Nazwa klanu.
+ * @property {number} level - Poziom klanu.
+ * @property {string} ph - Punkty honoru klanu.
+ * @typedef {Array<GuildRow>} GuildsLadder - Tablica z danymi o klanach z rankingu.
+ */
 export async function getServerGuildsLadderPage(required: {
     serverName: string
     page: number
@@ -79,6 +97,18 @@ export async function getServerGuildsLadderPage(required: {
     }
 }
 
+/**
+ *
+ * Pobiera pełną listę klanów dla określonego serwera. Funkcja pobiera strony pojedynczo i po każdej z nich wywołuje callback z danymi strony lub błędem.
+ *
+ * @param {object} required - Wymagane parametry do pobrania listy klanów.
+ * @param {string} required.serverName - Nazwa serwera, dla którego ma zostać pobrana lista klanów.
+ * @param {function} required.onPageSuccess - Funkcja wywoływana po pobraniu każdej strony z listy klanów. Przyjmuje obiekt reprezentujący daną stronę oraz numer bieżącej strony.
+ * @param {function} required.onPageError - Funkcja wywoływana w przypadku błędu pobierania strony z listy klanów. Przyjmuje obiekt z danymi błędu oraz numer bieżącej strony.
+ * @param {object} [options] - Opcjonalne parametry do konfiguracji pobierania listy klanów.
+ * @param {number} [options.delayBetweenPagesInMs] - Opóźnienie między kolejnymi żądaniami pobierania kolejnych stron (w milisekundach).
+ * @returns {Promise<object>} Obiekt z wynikami pobierania listy klanów.
+ */
 export async function getServerGuildsLadder(
     required: {
         serverName: string

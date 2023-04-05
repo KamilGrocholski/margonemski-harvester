@@ -1,4 +1,4 @@
-import { getServerCharactersLadderPage } from '../scrapers/server-characters-ladder'
+import { getServerCharactersLadderPage } from '../src/scrapers/server-characters-ladder'
 
 describe('server-characters-ladder-page', () => {
     it('should not throw', async () => {

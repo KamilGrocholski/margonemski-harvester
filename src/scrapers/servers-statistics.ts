@@ -24,6 +24,13 @@ export const onlinePlayersSchema = z.array(
 
 export const serversStatisticsSchema = z.array(serverStatisticsSchema)
 
+/**
+ * Pobiera nazwy graczy online ze wszystkich serwerów.
+ *
+ * @returns Promise zawierająca obiekt Result z danymi graczy online typu ServersOnlinePlayer.
+ * @description Funkcja wykorzystuje schemat serverStatisticsSchema do walidacji i deserializacji danych pobranych z serwera.
+ * Obiekt Result zawiera informacje o sukcesie lub błędzie zwróconym przez serwer oraz dane typu ServersOnlinePlayer.
+ */
 export async function getOnlinePlayers(): Promise<
     Result<ServersOnlinePlayers>
 > {
@@ -72,6 +79,18 @@ export async function getOnlinePlayers(): Promise<
     }
 }
 
+/**
+ *
+ * Pobiera statystyki wszystkich serwerów.
+ *
+ * @typedef {Object} ServerStatistics - Obiekt reprezentujący statystyki pojedynczego serwera.
+ * @property {name} - Nazwa serwera.
+ * @property {maxOnline} - Rekord liczby graczy, jaka była online w jednej momencie.
+ * @property {total} - Całkowita liczba graczy.
+ * @property {online} - Aktualna liczba graczy online na serwerze.
+ *
+ * @returns {Result<ServerStatistics[]>}
+ */
 export async function getServersStatistics(): Promise<
     Result<ServerStatistics[]>
 > {

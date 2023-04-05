@@ -1,4 +1,4 @@
-import { getGlobalStatistics } from '../scrapers/global-statistics'
+import { getGlobalStatistics } from '../src/scrapers/global-statistics'
 
 describe('global-statistics', () => {
     it('should not throw', async () => {
