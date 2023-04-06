@@ -68,7 +68,6 @@ export async function getAccountInfo(required: {
 
         let lastLogin = $(selectors.lastLogin).text().trim()
         lastLogin = lastLogin.slice(0, 5) + ' ' + lastLogin.slice(5)
-        console.log(lastLogin)
 
         const daysInGame = parseInt($(selectors.daysInGame).text(), 10)
         const deputy = $(selectors.deputy).text().trim()

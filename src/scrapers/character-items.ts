@@ -20,6 +20,7 @@ export type ItemsSet = z.output<typeof itemsSetSchema>
 
 export const itemSchema = z.object({
     name: z.string(),
+    id: z.string(),
     hid: z.string(),
     icon: z.string().endsWith('.gif'),
     cl: z.number().int().nonnegative(),
@@ -47,12 +48,18 @@ export async function getCharacterItems(required: {
         )
 
         Object.keys(data).forEach((key) => {
+            // add `id` to properties
+            data[key].id = key
+
             const stat = data[key].stat as string
             const split = stat.split(';') as string[]
-            const pairs: Record<string, string> = {}
+            const pairs: Record<string, string | undefined> = {}
 
             split.forEach((pair) => {
-                const [key, value] = pair.split('=') as [string, string]
+                const [key, value] = pair.split('=') as [
+                    string,
+                    string | undefined
+                ]
 
                 pairs[key] = value
             })

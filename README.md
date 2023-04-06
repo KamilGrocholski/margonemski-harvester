@@ -18,7 +18,10 @@
 ## Ranking postaci serwera
 
 ```ts
-import { CharactersLadder, getServerCharactersLadder } from '../src'
+import {
+    type CharactersLadder,
+    getServerCharactersLadder,
+} from 'margonemski-harvester'
 ;(async () => {
     const ladder: CharactersLadder = []
     const successPages: number[] = []
@@ -50,10 +53,84 @@ import { CharactersLadder, getServerCharactersLadder } from '../src'
 })()
 ```
 
+## Ranking klanów serwera
+
+```ts
+import { type GuildsLadder, getServerGuildsLadder } from 'margonemski-harvester'
+;(async () => {
+    const ladder: GuildsLadder = []
+    const successPages: number[] = []
+    const errorPages: number[] = []
+
+    const result = await getServerGuildsLadder({
+        serverName: 'tempest',
+        onPageSuccess(pageData, currentPage) {
+            ladder.push(...pageData)
+            successPages.push(currentPage)
+        },
+        onPageError(errorData, currentPage) {
+            console.error(errorData)
+            errorPages.push(currentPage)
+        },
+    })
+
+    if (result.success) {
+        console.log({
+            message: result.message,
+            totalPages: result.totalPages,
+        })
+    } else {
+        console.error({
+            cause: result.cause,
+            errorName: result.errorName,
+        })
+    }
+})()
+```
+
+## Ranking pvp serwera w danym sezonie
+
+```ts
+import {
+    type PvpCharacter,
+    getSeasonPvpCharacters,
+} from 'margonemski-harvester'
+;(async () => {
+    const ladder: PvpCharacter[] = []
+    const successPages: number[] = []
+    const errorPages: number[] = []
+
+    const result = await getSeasonPvpCharacters({
+        serverName: 'tempest',
+        season: 5,
+        onPageSuccess(pageData, currentPage) {
+            ladder.push(...pageData)
+            successPages.push(currentPage)
+        },
+        onPageError(errorData, currentPage) {
+            console.error(errorData)
+            errorPages.push(currentPage)
+        },
+    })
+
+    if (result.success) {
+        console.log({
+            message: result.message,
+            totalPages: result.totalPages,
+        })
+    } else {
+        console.error({
+            cause: result.cause,
+            errorName: result.errorName,
+        })
+    }
+})()
+```
+
 ## Informacje o koncie
 
 ```ts
-import { getAccountInfo } from '../src'
+import { getAccountInfo } from 'margonemski-harvester'
 ;(async () => {
     const result = await getAccountInfo({
         bucketId: 7218282,
@@ -75,7 +152,7 @@ import { getAccountInfo } from '../src'
 ## Globalne statystyki
 
 ```ts
-import { getGlobalStatistics } from '../src'
+import { getGlobalStatistics } from 'margonemski-harvester'
 ;(async () => {
     const result = await getGlobalStatistics()
 
@@ -93,7 +170,7 @@ import { getGlobalStatistics } from '../src'
 ## Lista postaci z klanu
 
 ```ts
-import { getGuildCharacters } from '../src'
+import { getGuildCharacters } from 'margonemski-harvester'
 ;(async () => {
     const result = await getGuildCharacters({
         serverName: 'tempest',
@@ -114,7 +191,7 @@ import { getGuildCharacters } from '../src'
 ## Postacie online według serwera
 
 ```ts
-import { getOnlinePlayers } from '../src'
+import { getOnlinePlayers } from 'margonemski-harvester'
 ;(async () => {
     const result = await getOnlinePlayers()
 
@@ -132,9 +209,30 @@ import { getOnlinePlayers } from '../src'
 ## Statystyki wszystkich serwerów
 
 ```ts
-import { getServersStatistics } from '../src'
+import { getServersStatistics } from 'margonemski-harvester'
 ;(async () => {
     const result = await getServersStatistics()
+
+    if (result.success) {
+        console.log(result.data)
+    } else {
+        console.error({
+            cause: result.cause,
+            errorName: result.errorName,
+        })
+    }
+})()
+```
+
+## Założone przedmioty postaci
+
+```ts
+import { getCharacterItems } from 'margonemski-harvester'
+;(async () => {
+    const result = await getCharacterItems({
+        characterId: 202596,
+        serverName: 'fobos',
+    })
 
     if (result.success) {
         console.log(result.data)
