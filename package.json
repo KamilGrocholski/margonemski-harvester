@@ -1,8 +1,9 @@
 {
     "name": "margonemski-harvester",
+    "author": "mikalsqwe",
     "description": "Można se pobrać rzeczy z tej strony -> https://www.margonem.pl",
     "license": "MIT",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "main": "dist/index.js",
     "module": "dist/index.mjs",
     "types": "dist/index.d.ts",
@@ -10,15 +11,30 @@
         "Margonem",
         "świry margonemskie"
     ],
+    "homepage": "https://github.com/KamilGrocholski/margonemski-harvester",
     "repository": {
         "type": "git",
-        "utl": "https://github.com/KamilGrocholski/margonemski-harvester"
+        "url": "https://github.com/KamilGrocholski/margonemski-harvester"
     },
     "scripts": {
         "build": "tsup src/index.ts --format cjs,esm --dts",
         "release": "pnpm run build && changeset publish",
         "lint": "tsc",
         "test": "jest"
+    },
+    "files": [
+        "src",
+        "dist",
+        "README.md",
+        "package.json"
+    ],
+    "exports": {
+        "./package.json": "./package.json",
+        ".": {
+            "import": "./dist/index.mjs",
+            "require": "./dist/index.js",
+            "default": "./dist/index.js"
+        }
     },
     "devDependencies": {
         "@changesets/cli": "^2.26.0",

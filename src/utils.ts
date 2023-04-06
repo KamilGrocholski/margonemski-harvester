@@ -11,6 +11,13 @@ export function composeUrl(
 export const delay = (timeInMs: number) =>
     new Promise((res) => setTimeout(res, timeInMs))
 
+export const myRegex = {
+    HH_MM: /^([01][0-9]|2[0-3]):[0-5][0-9]$/,
+    DD_MM_YY: /^0?[1-9]|[12]\d|3[01]-^0?[1-9]|1[0-2]$-^\d{4}$/,
+    'HH:MM DD-MM-YY':
+        /^([01]\d|2[0-3]):([0-5]\d)\s(0[1-9]|[12]\d|3[01])-(0[1-9]|1[0-2])-\d{4}$/,
+}
+
 export type Schemes = {
     [Key in keyof typeof schemes]: z.output<(typeof schemes)[Key]>
 }
@@ -40,4 +47,12 @@ export const schemes = {
     ) as z.ZodType<Profession>,
     lastOnline: z.string().min(1),
     gender: z.literal('Mężczyzna').or(z.literal('Kobieta')),
+    'HH:MM': z.string().regex(myRegex.HH_MM, 'HH-MM niepoprawna'),
+    'DD-MM-YY': z.string().regex(myRegex.DD_MM_YY, 'DD-MM-YY niepoprawny'),
+    'HH:MM DD-MM-YY': z
+        .string()
+        .regex(
+            new RegExp(myRegex['HH:MM DD-MM-YY']),
+            'Niepoprawny format czasu i daty - `HH:MM DD-MM-YY`'
+        ),
 }

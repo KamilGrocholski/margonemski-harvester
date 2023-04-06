@@ -1,0 +1,50 @@
+---
+import { GITHUB_REPO_URL } from '../../consts';
+
+---
+
+<a href={GITHUB_REPO_URL} target="_blank" rel="noopener noreferrer" class="github-link">
+    <style>
+        .github-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #24292e;
+  color: #fff;
+  text-decoration: none;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.github-link:hover {
+  background-color: #3f4448;
+}
+
+.github-link::before {
+  content: '';
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23fff" d="M12 0a12 12 0 00-3.818 23.399c.6.111.818-.261.818-.579 0-.286-.009-1.04-.015-2.039-3.341.724-4.042-1.61-4.042-1.61a3.171 3.171 0 00-1.336-1.748c-1.09-.741.083-.726.083-.726a2.517 2.517 0 011.834 1.238 2.548 2.548 0 003.463.991 2.555 2.555 0 01.763-1.6c-2.665-.305-5.466-1.332-5.466-5.93a4.667 4.667 0 011.248-3.232 4.31 4.31 0 01.117-3.184s1.007-.322 3.3 1.232a11.4 11.4 0 016 0c2.292-1.554 3.298-1.232 3.298-1.232a4.31 4.31 0 01.116 3.184 4.664 4.664 0 011.248 3.232c0 4.61-2.805 5.623-5.477 5.922a2.888 2.888 0 01.812 2.24c0 1.62-.015 2.921-.015 3.315 0 .322.212.7.825.579A12.007 12.007 0 0012 0z"/></svg>');
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+    </style>
+    <span class="sr-only">GitHub Profile</span>
+  </a>
+
+  

@@ -1,4 +1,4 @@
-import { getOnlinePlayers } from '../src'
+import { getOnlinePlayers } from 'margonemski-harvester'
 ;(async () => {
     const result = await getOnlinePlayers()
 

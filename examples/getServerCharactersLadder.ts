@@ -1,4 +1,21 @@
-import { CharactersLadder, getServerCharactersLadder } from '../src'
+import {
+    type CharactersLadder,
+    getServerCharactersLadder,
+    getServerCharactersLadderPage,
+    CharacterRow,
+} from 'margonemski-harvester'
+;(async () => {
+    const result = await getServerCharactersLadderPage({
+        serverName: 'tempest',
+        page: 1,
+    })
+
+    if (result.success) {
+        console.log(result.data)
+    } else {
+        console.error(result.cause)
+    }
+})()
 ;(async () => {
     const ladder: CharactersLadder = []
     const successPages: number[] = []
@@ -28,3 +45,24 @@ import { CharactersLadder, getServerCharactersLadder } from '../src'
         })
     }
 })()
+
+import {
+    charactersLadderSchema,
+    characterRowSchema,
+} from 'margonemski-harvester'
+
+const character: CharacterRow = {
+    rank: 1,
+    name: 'Łowcomir Kazrek',
+    level: 93,
+    profession: 'Łowca',
+    lastOnline: '2 dni temu',
+    ph: 1332,
+    characterLink: '/profile/view,7218282#char_467968,tempest',
+}
+
+const ladder = [character, character, character]
+
+const parsedCharacter = characterRowSchema.parse(character)
+
+const parsedLadder = charactersLadderSchema.parse(ladder)

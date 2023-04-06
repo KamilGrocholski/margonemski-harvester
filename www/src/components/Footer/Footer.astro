@@ -1,0 +1,23 @@
+---
+import GithubLogo from '../Header/GithubLogo.astro';
+
+type Props = {
+	path: string;
+};
+const { path } = Astro.props;
+---
+
+<footer>
+	<div>
+		<GithubLogo />
+	</div>
+</footer>
+
+<style>
+	footer {
+		margin-top: auto;
+		padding: 2rem;
+		border-top: 3px solid var(--theme-divider);
+		background-color: var(--theme-navbar-bg);
+	}
+</style>
