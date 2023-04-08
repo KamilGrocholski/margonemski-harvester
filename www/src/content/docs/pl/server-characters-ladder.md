@@ -4,8 +4,8 @@ title: 'Ranking postaci serwera'
 
 ## Pobieranie wszystkich stron
 
-<img src="/assets/server-characters-ladder.png" />
-<img src="/assets/table-pagination.png"  />
+<!-- <img src="/assets/server-characters-ladder.png" /> -->
+<!-- <img src="/assets/table-pagination.png"  /> -->
 
 ```ts
 import {
