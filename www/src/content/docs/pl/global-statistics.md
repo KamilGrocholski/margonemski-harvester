@@ -1,6 +1,5 @@
 ---
 title: 'Globalne statystyki'
-description: 'Docs intro'
 ---
 
 ## Pobieranie

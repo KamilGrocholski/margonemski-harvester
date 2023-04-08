@@ -13,12 +13,9 @@ export type PaginationResult = PaginationSuccessResult | PaginationErrorResult
 export type PaginationSuccessResult = {
     success: true
     totalPages: number
-    message: string
 }
 
-export type PaginationErrorResult = {
-    message: string
-} & ErrorData
+export type PaginationErrorResult = {} & ErrorData
 
 export type SinglePageResult<T> =
     | SinglePageSuccessResult<T>

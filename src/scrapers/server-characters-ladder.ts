@@ -61,9 +61,9 @@ export async function getServerCharactersLadderPage(required: {
 
         const tableRows = $(selectors.tableBody).find('tr')
 
-        const charactersLadder: CharactersLadder = []
+        const charactersLadder: CharactersLadder = new Array(tableRows.length)
 
-        tableRows.each((_, row) => {
+        tableRows.each((rowIndex, row) => {
             const rowData = $(row).find('td')
 
             const rank = parseInt(rowData.eq(0).text(), 10)
@@ -74,7 +74,7 @@ export async function getServerCharactersLadderPage(required: {
             const ph = parseInt(rowData.eq(4).text())
             const lastOnline = rowData.eq(5).text().trim()
 
-            charactersLadder.push({
+            charactersLadder[rowIndex] = {
                 rank,
                 name,
                 characterLink,
@@ -82,7 +82,7 @@ export async function getServerCharactersLadderPage(required: {
                 profession,
                 ph,
                 lastOnline,
-            })
+            }
         })
 
         return {
@@ -94,8 +94,10 @@ export async function getServerCharactersLadderPage(required: {
         const errorData = getErrorData(error)
 
         return {
-            ...errorData,
             page: required.page,
+            cause: errorData.cause,
+            success: errorData.success,
+            errorName: errorData.errorName,
         }
     }
 }
@@ -172,15 +174,11 @@ export async function getServerCharactersLadder(
 
         return {
             success: true,
-            message: `Pobrano wszystkie strony: [serverName: ${serverName}]`,
             totalPages: numberOfPages,
         }
     } catch (error) {
         const errorData = getErrorData(error)
 
-        return {
-            message: `Nie udało się pobrać wszystkich strony: [serverName: ${required.serverName}]`,
-            ...errorData,
-        }
+        return errorData
     }
 }

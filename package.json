@@ -3,7 +3,7 @@
     "author": "mikalsqwe",
     "description": "Można se pobrać rzeczy z tej strony -> https://www.margonem.pl",
     "license": "MIT",
-    "version": "0.0.6",
+    "version": "0.0.7",
     "main": "dist/index.js",
     "module": "dist/index.mjs",
     "types": "dist/index.d.ts",
@@ -11,7 +11,7 @@
         "Margonem",
         "świry margonemskie"
     ],
-    "homepage": "https://github.com/KamilGrocholski/margonemski-harvester",
+    "homepage": "https://margonemski-harvester.vercel.app/pl/introduction",
     "repository": {
         "type": "git",
         "url": "https://github.com/KamilGrocholski/margonemski-harvester"

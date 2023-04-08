@@ -1,6 +1,5 @@
 ---
 title: 'Informacje konta'
-description: ''
 ---
 
 ## Pobieranie

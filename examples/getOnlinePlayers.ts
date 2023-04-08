@@ -11,3 +11,17 @@ import { getOnlinePlayers } from 'margonemski-harvester'
         })
     }
 })()
+
+import {
+    type ServersOnlinePlayers,
+    onlinePlayersSchema,
+} from 'margonemski-harvester'
+
+const servers: ServersOnlinePlayers = [
+    {
+        serverName: 'Tempest',
+        onlinePlayers: ['Ktoś', 'Thaomir Kazrek', 'Łowcosław Kazrekiewicz'],
+    },
+]
+
+const onlinePlayers = onlinePlayersSchema.parse(servers)

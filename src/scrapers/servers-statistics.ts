@@ -42,9 +42,9 @@ export async function getOnlinePlayers(): Promise<
 
         const popupsElements = $(selectors.onlinePlayersPopups)
 
-        const servers: ServersOnlinePlayers = []
+        const servers: ServersOnlinePlayers = new Array(popupsElements.length)
 
-        popupsElements.each((_, popup) => {
+        popupsElements.each((popupIndex, popup) => {
             const serverName = $(popup)
                 .attr('class')
                 ?.split(' ')
@@ -55,17 +55,17 @@ export async function getOnlinePlayers(): Promise<
                 '.statistics-rank'
             )
 
-            const names: string[] = []
+            const names: string[] = new Array(namesList.length)
 
-            namesList.each((_, element) => {
+            namesList.each((nameIndex, element) => {
                 const name = $(element).text()
-                names.push(name)
+                names[nameIndex] = name
             })
 
-            servers.push({
+            servers[popupIndex] = {
                 serverName,
                 onlinePlayers: names,
-            })
+            }
         })
 
         return {
@@ -102,21 +102,28 @@ export async function getServersStatistics(): Promise<
             PAGES['/stats'].selectors.serversStatistics.list
         )
 
-        const serversStatistics: ServerStatistics[] = []
+        const serversStatistics: ServerStatistics[] = new Array(
+            serversStatisticsElements.length
+        )
 
-        serversStatisticsElements.each((_, { attribs }) => {
-            const name = (attribs['data-name'] as `#${string}`).slice(1)
-            const maxOnline = parseInt(attribs['data-maxonline'] as string, 10)
-            const total = parseInt(attribs['data-total'] as string, 10)
-            const online = parseInt(attribs['data-online'] as string, 10)
+        serversStatisticsElements.each(
+            (serversStatisticsIndex, { attribs }) => {
+                const name = (attribs['data-name'] as `#${string}`).slice(1)
+                const maxOnline = parseInt(
+                    attribs['data-maxonline'] as string,
+                    10
+                )
+                const total = parseInt(attribs['data-total'] as string, 10)
+                const online = parseInt(attribs['data-online'] as string, 10)
 
-            serversStatistics.push({
-                name,
-                maxOnline,
-                total,
-                online,
-            })
-        })
+                serversStatistics[serversStatisticsIndex] = {
+                    name,
+                    maxOnline,
+                    total,
+                    online,
+                }
+            }
+        )
 
         return {
             success: true,

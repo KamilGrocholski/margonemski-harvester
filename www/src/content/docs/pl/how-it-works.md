@@ -1,6 +1,5 @@
 ---
 title: 'Jak to działa'
-description: 'Docs intro'
 ---
 
 -   Cheerio:

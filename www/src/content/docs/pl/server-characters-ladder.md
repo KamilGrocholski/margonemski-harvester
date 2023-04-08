@@ -1,13 +1,11 @@
 ---
 title: 'Ranking postaci serwera'
-description: 'Docs intro'
 ---
 
 ## Pobieranie wszystkich stron
 
-<!--
-<img src="/assets/server-characters-ladder.png" />
-<img src="/assets/table-pagination.png"  /> -->
+<!-- <img src="/assets/server-characters-ladder.png" /> -->
+<!-- <img src="/assets/table-pagination.png"  /> -->
 
 ```ts
 import {
@@ -34,7 +32,6 @@ import {
 
     if (result.success) {
         console.log({
-            message: result.message,
             totalPages: result.totalPages,
         })
     } else {

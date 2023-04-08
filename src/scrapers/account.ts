@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { Element, load } from 'cheerio'
 import axios from 'axios'
 import { Schemes, composeUrl, schemes } from '../utils'
-import { PAGES, Profession } from '../constants'
+import { PAGES, Profession, SERVER_TYPES } from '../constants'
 import { InternalError, Result, getErrorData } from '../errors-and-results'
 
 export type ProfileCharacter = z.output<typeof profileCharacterSchema>
@@ -138,21 +138,21 @@ export async function getAccountInfo(required: {
             const serverType = $(list).find('h3').text().trim()
             const charactersList = $(list).find('li')
 
-            const characters: ProfileCharacter[] = []
+            const characters: ProfileCharacter[] = new Array(
+                charactersList.length
+            )
 
-            charactersList.each((_, element) => {
+            charactersList.each((characterIndex, element) => {
                 const character = getCharacter(element)
-                characters.push(character)
+                characters[characterIndex] = character
             })
 
-            if (serverType === 'Światy publiczne') {
+            if (serverType === SERVER_TYPES.public) {
                 publicCharacters = characters
-            } else if (serverType === 'Światy prywatne') {
+            } else if (serverType === SERVER_TYPES.private) {
                 privateCharacters = characters
             } else {
-                throw new InternalError(
-                    'Niepoprawny typ świata, dostępne opcje to: `Światy publiczne`, `Światy prywatne`'
-                )
+                throw new InternalError('Niepoprawny typ świata')
             }
         })
 

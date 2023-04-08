@@ -25,7 +25,6 @@ import { type GuildsLadder, getServerGuildsLadder } from 'margonemski-harvester'
 
     if (result.success) {
         console.log({
-            message: result.message,
             totalPages: result.totalPages,
         })
     } else {
