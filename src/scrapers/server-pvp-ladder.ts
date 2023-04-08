@@ -68,9 +68,9 @@ export async function getSeasonPvpCharactersPage(required: {
 
         const tableRows = $(selectors.tableBody).find('tr')
 
-        const pvpCharacters: PvpCharacter[] = []
+        const pvpCharacters: PvpCharacter[] = new Array(tableRows.length)
 
-        tableRows.each((_, row) => {
+        tableRows.each((rowIndex, row) => {
             const rowData = $(row).find('td')
 
             const rank = parseInt(rowData.eq(0).text(), 10)
@@ -86,7 +86,7 @@ export async function getSeasonPvpCharactersPage(required: {
             const wpr = rowData.eq(6).text().trim()
             const lastOnline = rowData.eq(7).text().trim()
 
-            pvpCharacters.push({
+            pvpCharacters[rowIndex] = {
                 rank,
                 name,
                 characterLink,
@@ -96,7 +96,7 @@ export async function getSeasonPvpCharactersPage(required: {
                 winRatio,
                 wpr,
                 lastOnline,
-            })
+            }
         })
 
         return {
@@ -109,7 +109,9 @@ export async function getSeasonPvpCharactersPage(required: {
 
         return {
             page: required.page,
-            ...errorData,
+            cause: errorData.cause,
+            success: errorData.success,
+            errorName: errorData.errorName,
         }
     }
 }
@@ -189,15 +191,11 @@ export async function getSeasonPvpCharacters(
 
         return {
             success: true,
-            message: `Pobrano wszystkie strony: [serverName: ${serverName}, season: ${season}]`,
             totalPages: numberOfPages,
         }
     } catch (error) {
         const errorData = getErrorData(error)
 
-        return {
-            ...errorData,
-            message: `Nie udało się pobrać wszystkich strony: [serverName: ${required.serverName}, season: ${required.season}]`,
-        }
+        return errorData
     }
 }

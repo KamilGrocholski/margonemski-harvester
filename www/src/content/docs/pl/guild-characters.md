@@ -1,6 +1,5 @@
 ---
 title: 'Lista postaci klanu'
-description: 'Docs intro'
 ---
 
 ## Pobieranie listy

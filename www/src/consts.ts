@@ -7,23 +7,18 @@ export const SITE = {
 
 export const OPEN_GRAPH = {
     image: {
-        src: 'https://github.com/withastro/astro/blob/main/.github/assets/banner.png?raw=true',
-        alt:
-            'astro logo on a starry expanse of space,' +
-            ' with a purple saturn-like planet floating in the right foreground',
+        src: 'https://a.allegroimg.com/original/1ef1b6/5557c8af4dcfb696ee765c0062ea',
+        alt: 'napis margonem na tle mapy z gry',
     },
-    twitter: 'astrodotbuild',
 }
 
 export const KNOWN_LANGUAGES = {
-    English: 'pl',
+    Polish: 'pl',
 } as const
 export const KNOWN_LANGUAGE_CODES = Object.values(KNOWN_LANGUAGES)
 
 export const GITHUB_REPO_URL = `https://github.com/KamilGrocholski/margonemski-harvester`
 export const GITHUB_EDIT_URL = `https://github.com/KamilGrocholski/margonemski-harvester/tree/main/www/docs`
-
-export const COMMUNITY_INVITE_URL = `https://astro.build/chat`
 
 // See "Algolia" section of the README for more information.
 export const ALGOLIA = {
@@ -53,6 +48,7 @@ export const SIDEBAR: Sidebar = {
             { text: 'Informacje konta', link: 'pl/account-info' },
             { text: 'Globalne statystyki', link: 'pl/global-statistics' },
             { text: 'Statystyki serwerów', link: 'pl/servers-statistics' },
+            { text: 'Postacie online', link: 'pl/online-players' },
             { text: 'Przedmioty postaci	', link: 'pl/character-items' },
         ],
     },

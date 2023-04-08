@@ -53,9 +53,9 @@ export async function getGuildCharacters(required: {
 
         const tableRows = $(selectors.tableBody).find('tr')
 
-        const guildCharacters: GuildCharacter[] = []
+        const guildCharacters: GuildCharacter[] = new Array(tableRows.length)
 
-        tableRows.each((_, row) => {
+        tableRows.each((rowIndex, row) => {
             const rowData = $(row).find('td')
 
             const rank = parseInt(rowData.eq(0).text(), 10)
@@ -66,7 +66,7 @@ export async function getGuildCharacters(required: {
             const ph = parseInt(rowData.eq(4).text())
             const role = rowData.eq(5).text().trim()
 
-            guildCharacters.push({
+            guildCharacters[rowIndex] = {
                 rank,
                 name,
                 characterLink,
@@ -74,7 +74,7 @@ export async function getGuildCharacters(required: {
                 profession,
                 ph,
                 role,
-            })
+            }
         })
 
         return {

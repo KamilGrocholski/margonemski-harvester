@@ -29,7 +29,6 @@ import {
 
     if (result.success) {
         console.log({
-            message: result.message,
             totalPages: result.totalPages,
         })
     } else {

@@ -7,6 +7,13 @@ export type Page =
     | `/guilds/view,${string},${number}`
     | `/profile/view,${number}#char_${number},${string}`
 
+export type ServerType = (typeof SERVER_TYPES)[keyof typeof SERVER_TYPES]
+
+export const SERVER_TYPES = {
+    public: 'Światy publiczne',
+    private: 'Światy prywatne',
+} as const
+
 export const HASH_FUNCTION_DIVISOR = 128 as const
 
 export const BASE_URL = 'https://www.margonem.pl' as const

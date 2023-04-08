@@ -59,9 +59,9 @@ export async function getServerGuildsLadderPage(required: {
 
         const tableRows = $(selectors.tableBody).find('tr')
 
-        const guildsLadder: GuildsLadder = []
+        const guildsLadder: GuildsLadder = new Array(tableRows.length)
 
-        tableRows.each((_, row) => {
+        tableRows.each((rowIndex, row) => {
             const rowData = $(row).find('td')
 
             const rank = parseInt(rowData.eq(0).text(), 10)
@@ -72,7 +72,7 @@ export async function getServerGuildsLadderPage(required: {
             const level = parseInt(rowData.eq(2).text(), 10)
             const ph = parseInt(rowData.eq(4).text())
 
-            guildsLadder.push({
+            guildsLadder[rowIndex] = {
                 rank,
                 name,
                 guildLink,
@@ -80,7 +80,7 @@ export async function getServerGuildsLadderPage(required: {
                 players,
                 level,
                 ph,
-            })
+            }
         })
 
         return {
@@ -90,9 +90,12 @@ export async function getServerGuildsLadderPage(required: {
         }
     } catch (error) {
         const errorData = getErrorData(error)
+
         return {
             page: required.page,
-            ...errorData,
+            cause: errorData.cause,
+            success: errorData.success,
+            errorName: errorData.errorName,
         }
     }
 }
@@ -166,15 +169,11 @@ export async function getServerGuildsLadder(
 
         return {
             success: true,
-            message: `Pobrano wszystkie strony: [serverName: ${serverName}]`,
             totalPages: numberOfPages,
         }
     } catch (error) {
         const errorData = getErrorData(error)
 
-        return {
-            ...errorData,
-            message: `Nie udało się pobrać wszystkich strony: [serverName: ${required.serverName}]`,
-        }
+        return errorData
     }
 }
