@@ -46,64 +46,45 @@ export type ErrorData = {
     cause: unknown
 }
 
-export function getErrorData(error: unknown): ErrorData {
-    const base: Omit<ErrorData, 'errorName'> = {
-        cause: error,
-        success: false,
-    }
-
-    if (error instanceof ZodError) {
-        return {
-            ...base,
-            errorName: 'VALIDATION_ERROR',
-        }
-    }
-
-    if (error instanceof AxiosError) {
-        return {
-            ...base,
-            errorName: 'AXIOS_ERROR',
-        }
-    }
-
-    if (error instanceof PaginationError) {
-        return {
-            ...base,
-            errorName: 'TABLE_PAGE_ERROR',
-        }
-    }
-
-    if (error instanceof InternalError) {
-        return {
-            ...base,
-            errorName: 'INTERNAL_ERROR',
-        }
-    }
-
-    return {
-        ...base,
-        errorName: 'UNDESCRIBED_ERROR',
-    }
-}
-
 export class PaginationError extends Error {
     constructor(message: string) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore https://github.com/tc39/proposal-error-cause
-        super(message, { cause })
+        super(message)
 
         this.name = 'PaginationError'
-        Object.setPrototypeOf(this, PaginationError)
+        Object.setPrototypeOf(this, PaginationError.prototype)
     }
 }
 
 export class InternalError extends Error {
     constructor(message: string) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore https://github.com/tc39/proposal-error-cause
-        super(message, { cause })
+        super(message)
 
         this.name = 'InternalError'
-        Object.setPrototypeOf(this, InternalError)
+        Object.setPrototypeOf(this, InternalError.prototype)
+    }
+}
+
+const errorsMap = new Map<any, ErrorName>([
+    [InternalError, 'INTERNAL_ERROR'],
+    [PaginationError, 'TABLE_PAGE_ERROR'],
+    [AxiosError, 'AXIOS_ERROR'],
+    [ZodError, 'VALIDATION_ERROR'],
+])
+
+export function getErrorData(error: unknown): ErrorData {
+    for (const [errorFromMap, name] of errorsMap) {
+        if (error instanceof errorFromMap) {
+            return {
+                cause: error,
+                success: false,
+                errorName: name,
+            }
+        }
+    }
+
+    return {
+        cause: error,
+        success: false,
+        errorName: 'UNDESCRIBED_ERROR',
     }
 }

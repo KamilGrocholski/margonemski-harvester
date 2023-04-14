@@ -29,12 +29,12 @@ export const guildCharactersSchema = z.array(guildCharacterSchema)
  * Wynik może zawierać tablicę obiektów GuildCharacter lub ErrorData w przypadku błędu.
  *
  * @typedef {Object} GuildCharacter - Obiekt reprezentujący postać w klanie.
- * @property {string} rank - Ranga postaci w klanie.
+ * @property {number} rank - Ranga postaci w klanie.
  * @property {string} name - Nazwa postaci.
  * @property {string} characterLink - Link do profilu postaci.
  * @property {number} level - Poziom postaci.
  * @property {string} profession - Nazwa profesji postaci.
- * @property {string} ph - Punkty honoru postaci.
+ * @property {number} ph - Punkty honoru postaci.
  * @property {string} role - Rola postaci w klanie.
  */
 export async function getGuildCharacters(required: {
