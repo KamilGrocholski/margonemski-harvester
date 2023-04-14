@@ -8,7 +8,7 @@ title: 'Lista postaci klanu'
 import { getGuildCharacters } from 'margonemski-harvester'
 ;(async () => {
     const result = await getGuildCharacters({
-        serverName: 'tempest',
+        serverName: 'Tempest',
         guildId: 2615,
     })
 
