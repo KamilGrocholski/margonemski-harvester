@@ -4,7 +4,7 @@ describe('server-characters-ladder-page', () => {
     it('should not throw, success', async () => {
         const page = 1
         const result = await getServerCharactersLadderPage({
-            serverName: 'tempest',
+            serverName: 'Tempest',
             page,
         })
 

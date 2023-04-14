@@ -4,15 +4,11 @@ describe('character items', () => {
     it('should not throw', async () => {
         const items = await getCharacterItems({
             characterId: 202596,
-            serverName: 'fobos',
+            serverName: 'Fobos',
         })
 
         expect(() => items).not.toThrow()
     })
 
-  it('should throw', async () => {
-    
-  })
+    it('should throw', async () => {})
 })
-
-

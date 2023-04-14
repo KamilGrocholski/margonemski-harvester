@@ -12,7 +12,7 @@ import { type GuildsLadder, getServerGuildsLadder } from 'margonemski-harvester'
     const errorPages: number[] = []
 
     const result = await getServerGuildsLadder({
-        serverName: 'tempest',
+        serverName: 'Tempest', // dla stron rankinu klanów nazwa świata musi być z wielkiej litery, 'https://www.margonem.pl/ladder/guilds,Tempest?page=2'
         onPageSuccess(pageData, currentPage) {
             ladder.push(...pageData)
             successPages.push(currentPage)
@@ -42,7 +42,7 @@ import { type GuildsLadder, getServerGuildsLadder } from 'margonemski-harvester'
 import { getServerGuildsLadderPage } from 'margonemski-harvester'
 ;(async () => {
     const result = await getServerGuildsLadderPage({
-        serverName: 'tempest',
+        serverName: 'Tempest', // dla stron rankinu klanów nazwa świata musi być z wielkiej litery, 'https://www.margonem.pl/ladder/guilds,Tempest?page=2'
         page: 1,
     })
 

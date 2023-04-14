@@ -5,7 +5,7 @@ describe('server-season-pvp-ladder-page', () => {
         const season = 5
         const page = 1
         const result = await getSeasonPvpCharactersPage({
-            serverName: 'tempest',
+            serverName: 'Tempest',
             season,
             page,
         })

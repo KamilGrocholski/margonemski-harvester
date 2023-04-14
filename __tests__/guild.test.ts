@@ -7,7 +7,7 @@ import {
 describe('guild', () => {
     it('should validate and return guild characters', async () => {
         const guildCharacters = await getGuildCharacters({
-            serverName: 'tempest',
+            serverName: 'Tempest',
             guildId: 2615,
         })
         expect(() => guildCharacters).not.toThrow()
@@ -17,7 +17,7 @@ describe('guild', () => {
         const guildCharacter: GuildCharacter = {
             name: 'Thaomir Kazrek',
             level: 64,
-            characterLink: '/profile/view,9327017#char_439176,tempest',
+            characterLink: '/profile/view,9327017#char_439176,Tempest',
             ph: 2311,
             profession: 'Wojownik',
             role: 'Virtutti margonemi',
