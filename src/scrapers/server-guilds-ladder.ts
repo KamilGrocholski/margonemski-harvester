@@ -72,7 +72,7 @@ export async function getServerGuildsLadderPage(required: {
             const level = parseInt(rowData.eq(2).text(), 10)
             const ph = parseInt(rowData.eq(4).text())
 
-            guildsLadder[rowIndex] = {
+            const parsedGuildRow = guildRowSchema.parse({
                 rank,
                 name,
                 guildLink,
@@ -80,12 +80,14 @@ export async function getServerGuildsLadderPage(required: {
                 players,
                 level,
                 ph,
-            }
+            })
+
+            guildsLadder[rowIndex] = parsedGuildRow
         })
 
         return {
             success: true,
-            data: guildsLadderSchema.parse(guildsLadder),
+            data: guildsLadder,
             page,
         }
     } catch (error) {

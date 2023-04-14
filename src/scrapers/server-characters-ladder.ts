@@ -74,7 +74,7 @@ export async function getServerCharactersLadderPage(required: {
             const ph = parseInt(rowData.eq(4).text())
             const lastOnline = rowData.eq(5).text().trim()
 
-            charactersLadder[rowIndex] = {
+            const parsedCharacter = characterRowSchema.parse({
                 rank,
                 name,
                 characterLink,
@@ -82,12 +82,14 @@ export async function getServerCharactersLadderPage(required: {
                 profession,
                 ph,
                 lastOnline,
-            }
+            })
+
+            charactersLadder[rowIndex] = parsedCharacter
         })
 
         return {
             success: true,
-            data: charactersLadderSchema.parse(charactersLadder),
+            data: charactersLadder,
             page,
         }
     } catch (error) {

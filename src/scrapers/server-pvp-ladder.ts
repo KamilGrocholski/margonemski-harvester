@@ -75,7 +75,7 @@ export async function getSeasonPvpCharactersPage(required: {
 
             const rank = parseInt(rowData.eq(0).text(), 10)
             const name = rowData.eq(1).text().trim()
-            const characterLink = rowData.eq(1).attr('href') as string
+            const characterLink = rowData.eq(1).find('a').attr('href') as string
             const level = parseInt(rowData.eq(2).text(), 10)
             const profession = rowData.eq(3).text().trim() as Profession
             const rankingPoints = parseInt(rowData.eq(4).text())
@@ -86,7 +86,7 @@ export async function getSeasonPvpCharactersPage(required: {
             const wpr = rowData.eq(6).text().trim()
             const lastOnline = rowData.eq(7).text().trim()
 
-            pvpCharacters[rowIndex] = {
+            const parsedPvpCharacter = pvpCharacterSchema.parse({
                 rank,
                 name,
                 characterLink,
@@ -96,12 +96,14 @@ export async function getSeasonPvpCharactersPage(required: {
                 winRatio,
                 wpr,
                 lastOnline,
-            }
+            })
+
+            pvpCharacters[rowIndex] = parsedPvpCharacter
         })
 
         return {
             success: true,
-            data: pvpCharactersSchema.parse(pvpCharacters),
+            data: pvpCharacters,
             page,
         }
     } catch (error) {
