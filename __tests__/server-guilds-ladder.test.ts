@@ -1,4 +1,8 @@
-import { getServerGuildsLadderPage } from '../src/scrapers/server-guilds-ladder'
+import { ErrorData } from '../src'
+import {
+    getServerGuildsLadder,
+    getServerGuildsLadderPage,
+} from '../src/scrapers/server-guilds-ladder'
 
 describe('server-guilds-ladder-page', () => {
     it('should not throw, success', async () => {
@@ -37,5 +41,48 @@ describe('server-guilds-ladder-page', () => {
         expect(() => result).not.toThrow()
         expect(result.success).toBe(false)
         expect(result.page).toBe(page)
+    })
+})
+
+describe('server-guilds-ladder: partial', () => {
+    const serverName = 'tempest'
+    const delayInMs = 120
+    const maxPageIndexToTest = 20
+
+    it('should not throw, success', async () => {
+        const errors: { error: ErrorData; page: number }[] = []
+
+        const result = new Promise((_, reject) => {
+            try {
+                getServerGuildsLadder(
+                    {
+                        serverName,
+                        onPageSuccess: (_, page) => {
+                            if (page >= maxPageIndexToTest) {
+                                reject()
+                            }
+                        },
+                        onPageError: (error, page) => {
+                            if (page >= maxPageIndexToTest) {
+                                reject()
+                            }
+                            errors.push({
+                                error,
+                                page,
+                            })
+                        },
+                    },
+                    {
+                        delayBetweenPagesInMs: delayInMs,
+                    },
+                )
+            } catch (err) {
+                // it should do nothing
+            }
+        })
+
+        console.log(errors)
+        expect(() => result).not.toThrow()
+        expect(errors.length).toBe(0)
     })
 })

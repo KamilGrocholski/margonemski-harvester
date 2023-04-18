@@ -3,14 +3,11 @@
     "author": "mikalsqwe",
     "description": "Można se pobrać rzeczy z tej strony -> https://www.margonem.pl",
     "license": "MIT",
-    "version": "0.0.9",
+    "version": "0.0.10",
     "main": "dist/index.js",
     "module": "dist/index.mjs",
     "types": "dist/index.d.ts",
-    "keywords": [
-        "Margonem",
-        "świry margonemskie"
-    ],
+    "keywords": ["Margonem", "świry margonemskie"],
     "homepage": "https://margonemski-harvester.vercel.app/pl/introduction",
     "repository": {
         "type": "git",
@@ -20,14 +17,10 @@
         "build": "tsup src/index.ts --format cjs,esm --dts",
         "release": "pnpm run build && changeset publish",
         "lint": "tsc",
-        "test": "jest"
+        "test": "jest",
+        "test:serially": "jest -i"
     },
-    "files": [
-        "src",
-        "dist",
-        "README.md",
-        "package.json"
-    ],
+    "files": ["src", "dist", "README.md", "package.json"],
     "exports": {
         "./package.json": "./package.json",
         ".": {
@@ -40,6 +33,7 @@
         "@changesets/cli": "^2.26.0",
         "@types/jest": "^29.5.0",
         "jest": "^29.5.0",
+        "prettier": "2.8.7",
         "ts-jest": "^29.1.0",
         "tsup": "^6.5.0",
         "typescript": "^4.9.4"

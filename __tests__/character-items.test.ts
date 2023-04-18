@@ -3,12 +3,9 @@ import { getCharacterItems } from '../src'
 describe('character items', () => {
     it('should not throw', async () => {
         const items = await getCharacterItems({
-            characterId: 202596,
-            serverName: 'Fobos',
+            characterId: 467968,
+            serverName: 'tempest',
         })
-
         expect(() => items).not.toThrow()
     })
-
-    it('should throw', async () => {})
 })

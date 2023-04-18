@@ -27,9 +27,8 @@ export type SinglePageSuccessResult<T> = {
     page: number
 }
 
-type SinglePageErrorResult = {
+export type SinglePageErrorResult = {
     page: number
-    row?: number
 } & ErrorData
 
 export type SuccessResult<T> = {

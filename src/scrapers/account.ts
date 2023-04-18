@@ -1,9 +1,9 @@
-import { z } from 'zod'
-import { Element, load } from 'cheerio'
 import axios from 'axios'
-import { Schemes, composeUrl, schemes } from '../utils'
+import { CheerioAPI, Element, load } from 'cheerio'
+import { z } from 'zod'
 import { PAGES, Profession, SERVER_TYPES } from '../constants'
-import { InternalError, Result, getErrorData } from '../errors-and-results'
+import { getErrorData, InternalError, Result } from '../errors-and-results'
+import { composeUrl, Schemes, schemes } from '../utils'
 
 export type ProfileCharacter = z.output<typeof profileCharacterSchema>
 export type AccountInfo = z.output<typeof accountInfoSchema>
@@ -54,8 +54,8 @@ export async function getAccountInfo(required: {
         const { bucketId, characterId, serverName } = required
         const { data } = await axios.get(
             composeUrl(
-                `/profile/view,${bucketId}#char_${characterId},${serverName}`
-            )
+                `/profile/view,${bucketId}#char_${characterId},${serverName}`,
+            ),
         )
 
         const $ = load(data)
@@ -75,60 +75,6 @@ export async function getAccountInfo(required: {
         const reputation = parseInt($(selectors.reputation).text(), 10)
         const reputationRatio = parseFloat($(selectors.reputationRatio).text())
 
-        const characterRow = selectors.charactersRow
-
-        function getCharacter(character: Element): ProfileCharacter {
-            const id = parseInt(
-                $(character).find(characterRow.id).attr('value') as string,
-                10
-            )
-            const name = $(character)
-                .find(characterRow.name)
-                .attr('value') as string
-            const level = parseInt(
-                $(character).find(characterRow.level).attr('value') as string,
-                10
-            )
-            const profession = $(character)
-                .find(characterRow.profession)
-                .attr('value') as Profession
-            const serverName = $(character)
-                .find(characterRow.serverName)
-                .attr('value') as string
-            const guildName = $(character)
-                .find(characterRow.guildName)
-                .attr('value') as string
-            const guildId = parseInt(
-                $(character).find(characterRow.guildId).attr('value') as string,
-                10
-            )
-            const guildLink = $(character)
-                .find(characterRow.guildLink)
-                .attr('value') as string
-            const gender = $(character)
-                .find(characterRow.gender)
-                .attr('value') as Schemes['gender']
-            const lastOnline = parseInt(
-                $(character)
-                    .find(characterRow.lastOnline)
-                    .attr('value') as string,
-                10
-            )
-
-            return {
-                id,
-                name,
-                level,
-                serverName,
-                guildId,
-                guildLink,
-                lastOnline,
-                gender,
-                guildName,
-                profession,
-            }
-        }
-
         const charactersLists = $(selectors.listOfCharacters)
 
         let publicCharacters: ProfileCharacter[] = []
@@ -139,11 +85,11 @@ export async function getAccountInfo(required: {
             const charactersList = $(list).find('li')
 
             const characters: ProfileCharacter[] = new Array(
-                charactersList.length
+                charactersList.length,
             )
 
             charactersList.each((characterIndex, element) => {
-                const character = getCharacter(element)
+                const character = getCharacter($, element)
                 characters[characterIndex] = character
             })
 
@@ -178,5 +124,55 @@ export async function getAccountInfo(required: {
         const errorData = getErrorData(error)
 
         return errorData
+    }
+}
+
+function getCharacter($: CheerioAPI, character: Element): ProfileCharacter {
+    const characterRow = PAGES['/profile/view'].selectors.charactersRow
+
+    const id = parseInt(
+        $(character).find(characterRow.id).attr('value') as string,
+        10,
+    )
+    const name = $(character).find(characterRow.name).attr('value') as string
+    const level = parseInt(
+        $(character).find(characterRow.level).attr('value') as string,
+        10,
+    )
+    const profession = $(character)
+        .find(characterRow.profession)
+        .attr('value') as Profession
+    const serverName = $(character)
+        .find(characterRow.serverName)
+        .attr('value') as string
+    const guildName = $(character)
+        .find(characterRow.guildName)
+        .attr('value') as string
+    const guildId = parseInt(
+        $(character).find(characterRow.guildId).attr('value') as string,
+        10,
+    )
+    const guildLink = $(character)
+        .find(characterRow.guildLink)
+        .attr('value') as string
+    const gender = $(character)
+        .find(characterRow.gender)
+        .attr('value') as Schemes['gender']
+    const lastOnline = parseInt(
+        $(character).find(characterRow.lastOnline).attr('value') as string,
+        10,
+    )
+
+    return {
+        id,
+        name,
+        level,
+        serverName,
+        guildId,
+        guildLink,
+        lastOnline,
+        gender,
+        guildName,
+        profession,
     }
 }

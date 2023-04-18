@@ -8,8 +8,8 @@ title: Przedmioty postaci
 import { getCharacterItems } from 'margonemski-harvester'
 ;(async () => {
     const result = await getCharacterItems({
-        characterId: 202596,
-        serverName: 'fobos',
+        characterId: 467968,
+        serverName: 'tempest',
     })
 
     if (result.success) {

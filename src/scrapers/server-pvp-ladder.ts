@@ -1,16 +1,16 @@
-import { z } from 'zod'
-import { load } from 'cheerio'
-import axios from 'axios'
-import { DEFAULT_REQUEST_DELAY_IN_MS, PAGES, Profession } from '../constants'
-import { composeUrl, delay, schemes } from '../utils'
+import { z } from 'zod';
+import { load } from 'cheerio';
+import axios from 'axios';
+import { DEFAULT_REQUEST_DELAY_IN_MS, PAGES, Profession } from '../constants';
+import { composeUrl, delay, schemes } from '../utils';
 import {
     ErrorData,
     PaginationResult,
     SinglePageResult,
     getErrorData,
-} from '../errors-and-results'
+} from '../errors-and-results';
 
-export type PvpCharacter = z.output<typeof pvpCharacterSchema>
+export type PvpCharacter = z.output<typeof pvpCharacterSchema>;
 
 export const pvpCharacterSchema = z.object({
     lastOnline: schemes.lastOnline,
@@ -22,9 +22,9 @@ export const pvpCharacterSchema = z.object({
     rankingPoints: z.number().int().nonnegative(),
     winRatio: z.number().nonnegative(),
     wpr: z.string().min(1),
-})
+});
 
-export const pvpCharactersSchema = z.array(pvpCharacterSchema)
+export const pvpCharactersSchema = z.array(pvpCharacterSchema);
 
 /**
  *
@@ -50,41 +50,44 @@ export const pvpCharactersSchema = z.array(pvpCharacterSchema)
  * @returns {Promise<SinglePageResult<PvpCharacter[]>>} Tablica reprezentujący wynik pobierania jednej strony z listą postaci PvP.
  */
 export async function getSeasonPvpCharactersPage(required: {
-    serverName: string
-    season: number
-    page: number
+    serverName: string;
+    season: number;
+    page: number;
 }): Promise<SinglePageResult<PvpCharacter[]>> {
     try {
-        const { serverName, season, page } = required
+        const { serverName, season, page } = required;
 
         const { data } = await axios.get(
             composeUrl(
-                `/ladder/players,${serverName},pvp?season=${season}&page=${page}`
-            )
-        )
-        const $ = load(data)
+                `/ladder/players,${serverName},pvp?season=${season}&page=${page}`,
+            ),
+        );
+        const $ = load(data);
 
-        const selectors = PAGES['/ladder/players'].selectors
+        const selectors = PAGES['/ladder/players'].selectors;
 
-        const tableRows = $(selectors.tableBody).find('tr')
+        const tableRows = $(selectors.tableBody).find('tr');
 
-        const pvpCharacters: PvpCharacter[] = new Array(tableRows.length)
+        const pvpCharacters: PvpCharacter[] = new Array(tableRows.length);
 
         tableRows.each((rowIndex, row) => {
-            const rowData = $(row).find('td')
+            const rowData = $(row).find('td');
 
-            const rank = parseInt(rowData.eq(0).text(), 10)
-            const name = rowData.eq(1).text().trim()
-            const characterLink = rowData.eq(1).find('a').attr('href') as string
-            const level = parseInt(rowData.eq(2).text(), 10)
-            const profession = rowData.eq(3).text().trim() as Profession
-            const rankingPoints = parseInt(rowData.eq(4).text())
+            const rank = parseInt(rowData.eq(0).text(), 10);
+            const name = rowData.eq(1).text().trim();
+            const characterLink = rowData
+                .eq(1)
+                .find('a')
+                .attr('href') as string;
+            const level = parseInt(rowData.eq(2).text(), 10);
+            const profession = rowData.eq(3).text().trim() as Profession;
+            const rankingPoints = parseInt(rowData.eq(4).text());
             const winRatio = parseInt(
                 rowData.eq(5).text().trim().slice(0, -1),
-                10
-            )
-            const wpr = rowData.eq(6).text().trim()
-            const lastOnline = rowData.eq(7).text().trim()
+                10,
+            );
+            const wpr = rowData.eq(6).text().trim();
+            const lastOnline = rowData.eq(7).text().trim();
 
             const parsedPvpCharacter = pvpCharacterSchema.parse({
                 rank,
@@ -96,25 +99,25 @@ export async function getSeasonPvpCharactersPage(required: {
                 winRatio,
                 wpr,
                 lastOnline,
-            })
+            });
 
-            pvpCharacters[rowIndex] = parsedPvpCharacter
-        })
+            pvpCharacters[rowIndex] = parsedPvpCharacter;
+        });
 
         return {
             success: true,
             data: pvpCharacters,
             page,
-        }
+        };
     } catch (error) {
-        const errorData = getErrorData(error)
+        const errorData = getErrorData(error);
 
         return {
             page: required.page,
             cause: errorData.cause,
             success: errorData.success,
             errorName: errorData.errorName,
-        }
+        };
     }
 }
 
@@ -134,49 +137,49 @@ export async function getSeasonPvpCharactersPage(required: {
  */
 export async function getSeasonPvpCharacters(
     required: {
-        serverName: string
-        season: number
+        serverName: string;
+        season: number;
         onPageSuccess: (
             pageData: PvpCharacter[],
-            currentPage: number
-        ) => Promise<void> | void
+            currentPage: number,
+        ) => Promise<void> | void;
         onPageError: (
             errorData: ErrorData,
-            currentPage: number
-        ) => Promise<void> | void
+            currentPage: number,
+        ) => Promise<void> | void;
     },
     options: { delayBetweenPagesInMs: number | undefined } = {
         delayBetweenPagesInMs: DEFAULT_REQUEST_DELAY_IN_MS,
-    }
+    },
 ): Promise<PaginationResult> {
     try {
-        const { serverName, season, onPageSuccess, onPageError } = required
+        const { serverName, season, onPageSuccess, onPageError } = required;
 
         const { data } = await axios.get(
             composeUrl(
-                `/ladder/players,${serverName},pvp?season=${season}&page=1`
-            )
-        )
-        const $ = load(data)
+                `/ladder/players,${serverName},pvp?season=${season}&page=1`,
+            ),
+        );
+        const $ = load(data);
 
-        const selectors = PAGES['/ladder/players/pvp'].selectors
+        const selectors = PAGES['/ladder/players/pvp'].selectors;
 
-        let numberOfPages = parseInt($(selectors.numberOfPages).text(), 10)
-        let currentPage: number = 1
+        let numberOfPages = parseInt($(selectors.numberOfPages).text(), 10);
+        let currentPage: number = 1;
 
         while (currentPage <= numberOfPages) {
             if (options.delayBetweenPagesInMs !== undefined) {
-                await delay(options.delayBetweenPagesInMs)
+                await delay(options.delayBetweenPagesInMs);
             }
 
             const result = await getSeasonPvpCharactersPage({
                 serverName,
                 page: currentPage,
                 season,
-            })
+            });
 
             if (result.success) {
-                onPageSuccess(result.data, result.page)
+                onPageSuccess(result.data, result.page);
             } else {
                 onPageError(
                     {
@@ -184,20 +187,20 @@ export async function getSeasonPvpCharacters(
                         errorName: result.errorName,
                         success: result.success,
                     },
-                    result.page
-                )
+                    result.page,
+                );
             }
 
-            currentPage++
+            currentPage++;
         }
 
         return {
             success: true,
             totalPages: numberOfPages,
-        }
+        };
     } catch (error) {
-        const errorData = getErrorData(error)
+        const errorData = getErrorData(error);
 
-        return errorData
+        return errorData;
     }
 }
