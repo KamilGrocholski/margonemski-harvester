@@ -10,13 +10,15 @@ function getBucketId(characterId: number): number {
 function composeUrlToCharacterItems(
     characterId: number,
     bucketId: number,
-    serverName: string
+    serverName: string,
 ): `${typeof BASE_GARMORY_CDN_URL}/${string}/${number}/${number}.json` {
     return `${BASE_GARMORY_CDN_URL}/${serverName}/${bucketId}/${characterId}.json`
 }
 
 export type Item = z.output<typeof itemSchema>
 export type ItemsSet = z.output<typeof itemsSetSchema>
+export type ItemsSetInput = z.input<typeof itemsSetSchema>
+export type ItemInput = z.input<typeof itemSchema>
 
 export const itemSchema = z.object({
     name: z.string(),
@@ -28,8 +30,20 @@ export const itemSchema = z.object({
     prc: z.string(),
     loc: z.string(),
     tpl: z.number(),
-    stat: z.record(z.string().or(z.undefined())),
+    // stat: z.record(z.string().or(z.undefined())),
     enhancementPoints: z.number().positive().int().optional(),
+    stat: z.string().transform((value) => {
+        const split = value.split(';') as string[]
+        const pairs: Record<string, string | undefined> = {}
+
+        split.forEach((pair) => {
+            const [key, value] = pair.split('=') as [string, string | undefined]
+
+            pairs[key] = value
+        })
+
+        return pairs
+    }),
 })
 
 export const itemsSetSchema = z.record(itemSchema)
@@ -44,27 +58,27 @@ export async function getCharacterItems(required: {
         const bucketId = getBucketId(characterId)
 
         const { data } = await axios.get(
-            composeUrlToCharacterItems(characterId, bucketId, serverName)
+            composeUrlToCharacterItems(characterId, bucketId, serverName),
         )
 
         Object.keys(data).forEach((key) => {
             // add `id` to properties
             data[key].id = key
 
-            const stat = data[key].stat as string
-            const split = stat.split(';') as string[]
-            const pairs: Record<string, string | undefined> = {}
-
-            split.forEach((pair) => {
-                const [key, value] = pair.split('=') as [
-                    string,
-                    string | undefined
-                ]
-
-                pairs[key] = value
-            })
-
-            data[key].stat = pairs
+            // const stat = data[key].stat as string
+            // const split = stat.split(';') as string[]
+            // const pairs: Record<string, string | undefined> = {}
+            //
+            // split.forEach((pair) => {
+            //     const [key, value] = pair.split('=') as [
+            //         string,
+            //         string | undefined,
+            //     ]
+            //
+            //     pairs[key] = value
+            // })
+            //
+            // data[key].stat = pairs
         })
 
         return {
