@@ -1,9 +1,9 @@
-import { z } from "zod";
-import { load } from "cheerio";
 import axios from "axios";
+import { load } from "cheerio";
+import { z } from "zod";
 import { PAGES } from "../constants";
+import { getErrorData, Result } from "../errors-and-results";
 import { composeUrl, schemes } from "../utils";
-import { Result, getErrorData } from "../errors-and-results";
 
 export type ServerStatistics = z.output<typeof serverStatisticsSchema>;
 export type ServersOnlinePlayers = z.output<typeof onlinePlayersSchema>;
@@ -19,17 +19,13 @@ export const onlinePlayersSchema = z.array(
   z.object({
     serverName: z.string().min(1),
     onlinePlayers: z.array(schemes.name),
-  })
+  }),
 );
 
 export const serversStatisticsSchema = z.array(serverStatisticsSchema);
 
 /**
  * Pobiera nazwy graczy online ze wszystkich serwerów.
- *
- * @returns Promise zawierająca obiekt Result z danymi graczy online typu ServersOnlinePlayer.
- * @description Funkcja wykorzystuje schemat serverStatisticsSchema do walidacji i deserializacji danych pobranych z serwera.
- * Obiekt Result zawiera informacje o sukcesie lub błędzie zwróconym przez serwer oraz dane typu ServersOnlinePlayer.
  */
 export async function getOnlinePlayers(): Promise<
   Result<ServersOnlinePlayers>
@@ -78,16 +74,7 @@ export async function getOnlinePlayers(): Promise<
 }
 
 /**
- *
  * Pobiera statystyki wszystkich serwerów.
- *
- * @typedef {Object} ServerStatistics - Obiekt reprezentujący statystyki pojedynczego serwera.
- * @property {name} - Nazwa serwera.
- * @property {maxOnline} - Rekord liczby graczy, jaka była online w jednej momencie.
- * @property {total} - Całkowita liczba graczy.
- * @property {online} - Aktualna liczba graczy online na serwerze.
- *
- * @returns {Result<ServerStatistics[]>}
  */
 export async function getServersStatistics(): Promise<
   Result<ServerStatistics[]>
@@ -97,11 +84,11 @@ export async function getServersStatistics(): Promise<
     const $ = load(data);
 
     const serversStatisticsElements = $(
-      PAGES["/stats"].selectors.serversStatistics.list
+      PAGES["/stats"].selectors.serversStatistics.list,
     );
 
     const serversStatistics: ServerStatistics[] = new Array(
-      serversStatisticsElements.length
+      serversStatisticsElements.length,
     );
 
     serversStatisticsElements.each((serversStatisticsIndex, { attribs }) => {
