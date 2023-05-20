@@ -8,6 +8,16 @@ export type ErrorName =
     | 'INTERNAL_ERROR'
     | 'VALIDATION_ERROR'
 
+export type OnPageSuccess<T> = (pageResultSuccess: {
+    data: T
+    currentPage: number
+}) => Promise<void> | void
+
+export type OnPageError = (pageResultError: {
+    errorData: ErrorData
+    currentPage: number
+}) => Promise<void> | void
+
 export type PaginationResult = PaginationSuccessResult | PaginationErrorResult
 
 export type PaginationSuccessResult = {
@@ -68,7 +78,7 @@ const errorsMap = new Map<any, ErrorName>([
     [InternalError, 'INTERNAL_ERROR'],
     [PaginationError, 'TABLE_PAGE_ERROR'],
     [AxiosError, 'AXIOS_ERROR'],
-    [ZodError, 'VALIDATION_ERROR'],
+    [ZodError, 'VALIDATION_ERROR']
 ])
 
 export function getErrorData(error: unknown): ErrorData {
@@ -77,7 +87,7 @@ export function getErrorData(error: unknown): ErrorData {
             return {
                 cause: error,
                 success: false,
-                errorName: name,
+                errorName: name
             }
         }
     }
@@ -85,6 +95,6 @@ export function getErrorData(error: unknown): ErrorData {
     return {
         cause: error,
         success: false,
-        errorName: 'UNDESCRIBED_ERROR',
+        errorName: 'UNDESCRIBED_ERROR'
     }
 }

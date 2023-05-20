@@ -1,7 +1,7 @@
-import { ErrorData } from '../src'
+import { type ErrorData } from '../src'
 import {
     getSeasonPvpCharacters,
-    getSeasonPvpCharactersPage,
+    getSeasonPvpCharactersPage
 } from '../src/scrapers/server-pvp-ladder'
 
 describe('server-season-pvp-ladder-page', () => {
@@ -11,7 +11,7 @@ describe('server-season-pvp-ladder-page', () => {
         const result = await getSeasonPvpCharactersPage({
             serverName: 'Tempest',
             season,
-            page,
+            page
         })
 
         expect(() => result).not.toThrow()
@@ -26,7 +26,7 @@ describe('server-season-pvp-ladder-page', () => {
         const result = await getSeasonPvpCharactersPage({
             serverName: invalidServerName,
             season,
-            page,
+            page
         })
 
         expect(() => result).not.toThrow()
@@ -50,24 +50,24 @@ describe('server-guilds-ladder: partial', () => {
                     {
                         serverName,
                         season,
-                        onPageSuccess: (_, page) => {
-                            if (page >= maxPageIndexToTest) {
-                                reject()
+                        onPageSuccess: ({ currentPage }) => {
+                            if (currentPage >= maxPageIndexToTest) {
+                                throw reject()
                             }
                         },
-                        onPageError: (error, page) => {
-                            if (page >= maxPageIndexToTest) {
-                                reject()
+                        onPageError: ({ errorData, currentPage }) => {
+                            if (currentPage >= maxPageIndexToTest) {
+                                throw reject()
                             }
                             errors.push({
-                                error,
-                                page,
+                                error: errorData,
+                                page: currentPage
                             })
-                        },
+                        }
                     },
                     {
-                        delayBetweenPagesInMs: delayInMs,
-                    },
+                        delayBetweenPagesInMs: delayInMs
+                    }
                 )
             } catch (err) {
                 // it should do nothing

@@ -11,7 +11,7 @@ title: 'Ranking postaci serwera'
 import {
     type CharactersLadder,
     getServerCharactersLadder,
-    getServerCharactersLadderPage,
+    getServerCharactersLadderPage
 } from 'margonemski-harvester'
 ;(async () => {
     const ladder: CharactersLadder = []
@@ -20,24 +20,24 @@ import {
 
     const result = await getServerCharactersLadder({
         serverName: 'tempest',
-        onPageSuccess(pageData, currentPage) {
-            ladder.push(...pageData)
+        onPageSuccess({ data, currentPage }) {
+            ladder.push(...data)
             successPages.push(currentPage)
         },
-        onPageError(errorData, currentPage) {
+        onPageError({ errorData, currentPage }) {
             console.error(errorData)
             errorPages.push(currentPage)
-        },
+        }
     })
 
     if (result.success) {
         console.log({
-            totalPages: result.totalPages,
+            totalPages: result.totalPages
         })
     } else {
         console.error({
             cause: result.cause,
-            errorName: result.errorName,
+            errorName: result.errorName
         })
     }
 })()
@@ -50,7 +50,7 @@ import { getServerCharactersLadderPage } from 'margonemski-harvester'
 ;(async () => {
     const result = await getServerCharactersLadderPage({
         serverName: 'tempest',
-        page: 1,
+        page: 1
     })
 
     if (result.success) {
@@ -70,7 +70,7 @@ import {
     type CharacterRow,
     type CharactersLadder,
     charactersLadderSchema,
-    characterRowSchema,
+    characterRowSchema
 } from 'margonemski-harvester'
 
 const character: CharacterRow = {
@@ -80,7 +80,7 @@ const character: CharacterRow = {
     profession: 'Łowca',
     lastOnline: '2 dni temu',
     ph: 1332,
-    characterLink: '/profile/view,7218282#char_467968,tempest',
+    characterLink: '/profile/view,7218282#char_467968,tempest'
 }
 
 const ladder: CharactersLadder = [character, character, character]

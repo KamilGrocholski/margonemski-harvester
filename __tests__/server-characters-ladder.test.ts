@@ -1,7 +1,7 @@
 import { ErrorData } from '../dist'
 import {
     getServerCharactersLadder,
-    getServerCharactersLadderPage,
+    getServerCharactersLadderPage
 } from '../src/scrapers/server-characters-ladder'
 
 describe('server-characters-ladder-page', () => {
@@ -9,7 +9,7 @@ describe('server-characters-ladder-page', () => {
         const page = 1
         const result = await getServerCharactersLadderPage({
             serverName: 'Tempest',
-            page,
+            page
         })
 
         expect(() => result).not.toThrow()
@@ -22,7 +22,7 @@ describe('server-characters-ladder-page', () => {
         const invalidServerName = 'qwewqeqweqweqweqwewqewq'
         const result = await getServerCharactersLadderPage({
             serverName: invalidServerName,
-            page,
+            page
         })
 
         expect(() => result).not.toThrow()
@@ -44,24 +44,24 @@ describe('server-characters-ladder: partial', () => {
                 getServerCharactersLadder(
                     {
                         serverName,
-                        onPageSuccess: (_, page) => {
-                            if (page >= maxPageIndexToTest) {
-                                reject()
+                        onPageSuccess: ({ currentPage }) => {
+                            if (currentPage >= maxPageIndexToTest) {
+                                throw reject()
                             }
                         },
-                        onPageError: (error, page) => {
-                            if (page >= maxPageIndexToTest) {
-                                reject()
+                        onPageError: ({ errorData, currentPage }) => {
+                            if (currentPage >= maxPageIndexToTest) {
+                                throw reject()
                             }
                             errors.push({
-                                error,
-                                page,
+                                error: errorData,
+                                page: currentPage
                             })
-                        },
+                        }
                     },
                     {
-                        delayBetweenPagesInMs: delayInMs,
-                    },
+                        delayBetweenPagesInMs: delayInMs
+                    }
                 )
             } catch (err) {
                 // it should do nothing

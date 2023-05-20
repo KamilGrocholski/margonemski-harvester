@@ -1,7 +1,7 @@
 import { ErrorData } from '../src'
 import {
     getServerGuildsLadder,
-    getServerGuildsLadderPage,
+    getServerGuildsLadderPage
 } from '../src/scrapers/server-guilds-ladder'
 
 describe('server-guilds-ladder-page', () => {
@@ -9,7 +9,7 @@ describe('server-guilds-ladder-page', () => {
         const page = 1
         const result = await getServerGuildsLadderPage({
             serverName: 'Tempest', // dla stron rankinu klanów nazwa świata musi być z wielkiej litery, 'https://www.margonem.pl/ladder/guilds,Tempest?page=2'
-            page,
+            page
         })
 
         expect(() => result).not.toThrow()
@@ -22,7 +22,7 @@ describe('server-guilds-ladder-page', () => {
         const invalidServerName = 'qwewqeqweqweqweqwewqewq'
         const result = await getServerGuildsLadderPage({
             serverName: invalidServerName,
-            page,
+            page
         })
 
         expect(() => result).not.toThrow()
@@ -35,7 +35,7 @@ describe('server-guilds-ladder-page', () => {
         const invalidServerName = 'tempest'
         const result = await getServerGuildsLadderPage({
             serverName: invalidServerName,
-            page,
+            page
         })
 
         expect(() => result).not.toThrow()
@@ -57,24 +57,24 @@ describe('server-guilds-ladder: partial', () => {
                 getServerGuildsLadder(
                     {
                         serverName,
-                        onPageSuccess: (_, page) => {
-                            if (page >= maxPageIndexToTest) {
-                                reject()
+                        onPageSuccess: ({ currentPage }) => {
+                            if (currentPage >= maxPageIndexToTest) {
+                                throw reject()
                             }
                         },
-                        onPageError: (error, page) => {
-                            if (page >= maxPageIndexToTest) {
-                                reject()
+                        onPageError: ({ errorData, currentPage }) => {
+                            if (currentPage >= maxPageIndexToTest) {
+                                throw reject()
                             }
                             errors.push({
-                                error,
-                                page,
+                                error: errorData,
+                                page: currentPage
                             })
-                        },
+                        }
                     },
                     {
-                        delayBetweenPagesInMs: delayInMs,
-                    },
+                        delayBetweenPagesInMs: delayInMs
+                    }
                 )
             } catch (err) {
                 // it should do nothing

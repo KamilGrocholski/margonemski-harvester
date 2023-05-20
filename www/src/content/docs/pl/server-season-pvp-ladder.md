@@ -7,7 +7,7 @@ title: Ranking otchłani
 ```ts
 import {
     type PvpCharacter,
-    getSeasonPvpCharacters,
+    getSeasonPvpCharacters
 } from 'margonemski-harvester'
 ;(async () => {
     const ladder: PvpCharacter[] = []
@@ -17,24 +17,24 @@ import {
     const result = await getSeasonPvpCharacters({
         serverName: 'tempest',
         season: 5,
-        onPageSuccess(pageData, currentPage) {
-            ladder.push(...pageData)
+        onPageSuccess({ currentPage, data }) {
+            ladder.push(...data)
             successPages.push(currentPage)
         },
-        onPageError(errorData, currentPage) {
+        onPageError({ errorData, currentPage }) {
             console.error(errorData)
             errorPages.push(currentPage)
-        },
+        }
     })
 
     if (result.success) {
         console.log({
-            totalPages: result.totalPages,
+            totalPages: result.totalPages
         })
     } else {
         console.error({
             cause: result.cause,
-            errorName: result.errorName,
+            errorName: result.errorName
         })
     }
 })()
@@ -48,7 +48,7 @@ import { getSeasonPvpCharactersPage } from 'margonemski-harvester'
     const result = await getSeasonPvpCharactersPage({
         serverName: 'tempest',
         season: 5,
-        page: 1,
+        page: 1
     })
 
     if (result.success) {
@@ -67,7 +67,7 @@ Pomyślna walidacja i parsowanie są wymagane do zwrócenia obiektu zawierające
 import {
     type PvpCharacter,
     pvpCharacterSchema,
-    pvpCharactersSchema,
+    pvpCharactersSchema
 } from 'margonemski-harvester'
 
 const pvpCharacter: PvpCharacter = {
@@ -79,7 +79,7 @@ const pvpCharacter: PvpCharacter = {
     winRatio: 25.12,
     wpr: '23 / 11 / 0',
     rankingPoints: 3200,
-    characterLink: '/profile/view,7218282#char_467968,tempest',
+    characterLink: '/profile/view,7218282#char_467968,tempest'
 }
 
 const ladder: PvpCharacter[] = [pvpCharacter, pvpCharacter, pvpCharacter]

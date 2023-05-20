@@ -1,6 +1,6 @@
 import {
     getOnlinePlayers,
-    getServersStatistics,
+    getServersStatistics
 } from '../src/scrapers/servers-statistics'
 
 describe('servers-statistics', () => {
