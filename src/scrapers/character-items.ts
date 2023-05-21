@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { z } from 'zod'
 import { BASE_GARMORY_CDN_URL, HASH_FUNCTION_DIVISOR } from '../constants'
-import { getErrorData, Result } from '../errors-and-results'
+import { getErrorData, type Result } from '../errors-and-results'
 
 function getBucketId(characterId: number): number {
     return characterId % HASH_FUNCTION_DIVISOR

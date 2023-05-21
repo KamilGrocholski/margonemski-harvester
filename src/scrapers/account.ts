@@ -1,9 +1,9 @@
 import axios from 'axios'
-import { CheerioAPI, Element, load } from 'cheerio'
+import { type CheerioAPI, type Element, load } from 'cheerio'
 import { z } from 'zod'
-import { PAGES, Profession, SERVER_TYPES } from '../constants'
-import { getErrorData, InternalError, Result } from '../errors-and-results'
-import { composeUrl, Schemes, schemes } from '../utils'
+import { PAGES, type Profession, SERVER_TYPES } from '../constants'
+import { getErrorData, InternalError, type Result } from '../errors-and-results'
+import { composeUrl, type Schemes, schemes } from '../utils'
 
 export type ProfileCharacter = z.output<typeof profileCharacterSchema>
 export type AccountInfo = z.output<typeof accountInfoSchema>

@@ -1,8 +1,8 @@
 import axios from 'axios'
 import { load } from 'cheerio'
 import { z } from 'zod'
-import { PAGES, Profession } from '../constants'
-import { getErrorData, Result } from '../errors-and-results'
+import { PAGES, type Profession } from '../constants'
+import { getErrorData, type Result } from '../errors-and-results'
 import { composeUrl, schemes } from '../utils'
 
 export type GuildCharacter = z.output<typeof guildCharacterSchema>

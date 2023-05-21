@@ -1,7 +1,11 @@
 import axios from 'axios'
 import { load } from 'cheerio'
 import { z } from 'zod'
-import { DEFAULT_REQUEST_DELAY_IN_MS, PAGES, Profession } from '../constants'
+import {
+    DEFAULT_REQUEST_DELAY_IN_MS,
+    PAGES,
+    type Profession
+} from '../constants'
 import {
     getErrorData,
     type OnPageError,
