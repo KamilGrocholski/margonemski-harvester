@@ -12,25 +12,25 @@ import { type GuildsLadder, getServerGuildsLadder } from 'margonemski-harvester'
     const errorPages: number[] = []
 
     const result = await getServerGuildsLadder({
-        serverName: 'Tempest', // dla stron rankinu klanów nazwa świata musi być z wielkiej litery, 'https://www.margonem.pl/ladder/guilds,Tempest?page=2'
-        onPageSuccess(pageData, currentPage) {
-            ladder.push(...pageData)
+        serverName: 'Tempest', // dla stron rankingu klanów nazwa świata musi być z wielkiej litery, 'https://www.margonem.pl/ladder/guilds,Tempest?page=2'
+        onPageSuccess({ data, currentPage }) {
+            ladder.push(...data)
             successPages.push(currentPage)
         },
-        onPageError(errorData, currentPage) {
+        onPageError({ errorData, currentPage }) {
             console.error(errorData)
             errorPages.push(currentPage)
-        },
+        }
     })
 
     if (result.success) {
         console.log({
-            totalPages: result.totalPages,
+            totalPages: result.totalPages
         })
     } else {
         console.error({
             cause: result.cause,
-            errorName: result.errorName,
+            errorName: result.errorName
         })
     }
 })()
@@ -43,7 +43,7 @@ import { getServerGuildsLadderPage } from 'margonemski-harvester'
 ;(async () => {
     const result = await getServerGuildsLadderPage({
         serverName: 'Tempest', // dla stron rankinu klanów nazwa świata musi być z wielkiej litery, 'https://www.margonem.pl/ladder/guilds,Tempest?page=2'
-        page: 1,
+        page: 1
     })
 
     if (result.success) {
@@ -63,7 +63,7 @@ import {
     GuildRow,
     GuildsLadder,
     guildRowSchema,
-    guildsLadderSchema,
+    guildsLadderSchema
 } from 'margonemski-harvester'
 
 const guild: GuildRow = {
@@ -73,7 +73,7 @@ const guild: GuildRow = {
     ph: 231313,
     players: 100,
     power: '9m',
-    guildLink: '/guilds/view,Tempest,2615',
+    guildLink: '/guilds/view,Tempest,2615'
 }
 
 const ladder: GuildsLadder = [guild, guild, guild]
