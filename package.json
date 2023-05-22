@@ -3,7 +3,7 @@
     "author": "mikalsqwe",
     "description": "Można se pobrać rzeczy z tej strony -> https://www.margonem.pl",
     "license": "MIT",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "main": "dist/index.js",
     "module": "dist/index.mjs",
     "types": "dist/index.d.ts",
