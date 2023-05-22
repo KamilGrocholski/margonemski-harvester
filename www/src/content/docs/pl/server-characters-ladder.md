@@ -18,17 +18,22 @@ import {
     const successPages: number[] = []
     const errorPages: number[] = []
 
-    const result = await getServerCharactersLadder({
-        serverName: 'tempest',
-        onPageSuccess({ data, currentPage }) {
-            ladder.push(...data)
-            successPages.push(currentPage)
+    const result = await getServerCharactersLadder(
+        {
+            serverName: 'tempest',
+            onPageSuccess({ data, currentPage }) {
+                ladder.push(...data)
+                successPages.push(currentPage)
+            },
+            onPageError({ errorData, currentPage }) {
+                console.error(errorData)
+                errorPages.push(currentPage)
+            }
         },
-        onPageError({ errorData, currentPage }) {
-            console.error(errorData)
-            errorPages.push(currentPage)
+        {
+            delayBetweenPagesInMs: 150 // 429 Too Many Requests
         }
-    })
+    )
 
     if (result.success) {
         console.log({

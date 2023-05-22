@@ -20,7 +20,7 @@ export const BASE_URL = 'https://www.margonem.pl' as const
 
 export const BASE_GARMORY_CDN_URL = 'https://mec.garmory-cdn.cloud/pl' as const
 
-export const DEFAULT_REQUEST_DELAY_IN_MS = 100 as const
+export const DEFAULT_REQUEST_DELAY_IN_MS = 150 as const
 
 export const PAGES = {
     '/art/world': {
